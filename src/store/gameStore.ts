@@ -12,6 +12,8 @@ import {
   PrestigeState,
   CasinoResult,
   CasinoGameType,
+  WheelPrize,
+  LotteryResult,
 } from '../types/game';
 import { INITIAL_BUSINESSES } from '../constants/businesses';
 import { INITIAL_STOCKS } from '../constants/stocks';
@@ -30,6 +32,7 @@ import {
   calcNetWorth,
   calcPropertyUpgradeCost,
   calcPrestigeTokens,
+  calcPrestigeRequirement,
   calcOfflineEarnings,
 } from '../utils/calculations';
 
@@ -124,6 +127,15 @@ function buildInitialState(): GameState {
       biggestWin: 0,
       history: [],
     },
+    wheel: {
+      lastFreeSpinDate: '',
+      totalSpins: 0,
+    },
+    lottery: {
+      ticketsBought: 0,
+      lastJackpotAt: 0,
+      totalWon: 0,
+    },
     lastSaved: now,
     lastActive: now,
     offlineEarnings: 0,
@@ -166,6 +178,8 @@ export interface GameActions {
   refreshPassiveIncome: () => void;
   buyTokens: (packageId: string) => boolean;
   sellTokens: (amount: number) => number;
+  spinWheel: (useGems: boolean) => WheelPrize | null;
+  buyLotteryTicket: (tickets: number) => LotteryResult | null;
   playSlots: (bet: number) => CasinoResult | null;
   playCoinFlip: (bet: number, choice: 'heads' | 'tails') => CasinoResult | null;
   playRoulette: (bet: number, betType: 'red' | 'black' | 'even' | 'odd' | 'number', number?: number) => CasinoResult | null;
@@ -590,7 +604,8 @@ export const useGameStore = create<GameStore>()((set, get) => ({
 
   performPrestige() {
     const state = get();
-    if (state.netWorth < GameConfig.prestige.minimumNetWorth) return false;
+    const required = calcPrestigeRequirement(state.prestigeData.count);
+    if (state.netWorth < required) return false;
     const tokens = calcPrestigeTokens(state.netWorth, state.prestigeData.count);
 
     set(
@@ -1042,4 +1057,99 @@ export const useGameStore = create<GameStore>()((set, get) => ({
 
     return result;
   },
+
+  spinWheel(useGems) {
+    const state = get();
+    const today = new Date().toDateString();
+    const hasFree = state.wheel.lastFreeSpinDate !== today;
+    const GEM_COST = 3;
+
+    if (!hasFree && useGems && state.gems < GEM_COST) return null;
+    if (!hasFree && !useGems) return null;
+
+    const income = state.passiveIncome > 0 ? state.passiveIncome : 1;
+    const PRIZES: WheelPrize[] = [
+      { type: 'money',      label: 'Small Cash',     emoji: '💵', amount: income * 30,    color: '#FFD700' },
+      { type: 'gems',       label: '5 Gems',          emoji: '💎', amount: 5,              color: '#00E5FF' },
+      { type: 'money',      label: 'Big Cash',        emoji: '🤑', amount: income * 120,   color: '#FFB300' },
+      { type: 'nothing',    label: 'Try Again',       emoji: '💨', amount: 0,              color: '#555555' },
+      { type: 'tokens',     label: '50 Tokens',       emoji: '🎫', amount: 50,             color: '#AB47BC' },
+      { type: 'gems',       label: '15 Gems',         emoji: '💎', amount: 15,             color: '#00E5FF' },
+      { type: 'money',      label: 'Tap Stash',       emoji: '💸', amount: income * 60,    color: '#FF8C00' },
+      { type: 'tokens',     label: '200 Tokens',      emoji: '🎫', amount: 200,            color: '#CE93D8' },
+      { type: 'nothing',    label: 'Nothing',         emoji: '🌀', amount: 0,              color: '#333333' },
+      { type: 'multiplier', label: '2x Income 60s',   emoji: '⚡', amount: 60_000,         color: '#FF1744' },
+    ];
+
+    const WEIGHTS = [22, 12, 8, 16, 10, 6, 12, 5, 15, 4];
+    const totalW = WEIGHTS.reduce((a, b) => a + b, 0);
+    let r = Math.random() * totalW;
+    let prize = PRIZES[0];
+    for (let i = 0; i < PRIZES.length; i++) {
+      if (r < WEIGHTS[i]) { prize = PRIZES[i]; break; }
+      r -= WEIGHTS[i];
+    }
+
+    set(produce((draft: GameState) => {
+      if (hasFree) {
+        draft.wheel.lastFreeSpinDate = today;
+      } else {
+        draft.gems -= GEM_COST;
+      }
+      draft.wheel.totalSpins += 1;
+
+      if (prize.type === 'money') {
+        const gain = Math.max(100, prize.amount);
+        draft.money += gain;
+        draft.lifetimeEarnings += gain;
+      } else if (prize.type === 'gems') {
+        draft.gems += prize.amount;
+      } else if (prize.type === 'tokens') {
+        draft.casino.tokens += prize.amount;
+      } else if (prize.type === 'multiplier') {
+        draft.boosters.incomeBoost2x.active = true;
+        draft.boosters.incomeBoost2x.endsAt = Date.now() + prize.amount;
+      }
+    }));
+
+    return prize;
+  },
+
+  buyLotteryTicket(tickets) {
+    const state = get();
+    const TICKET_PRICE = Math.max(100, state.netWorth * 0.001);
+    const totalCost = TICKET_PRICE * tickets;
+    if (state.money < totalCost || tickets <= 0) return null;
+
+    let bestPrize: LotteryResult = { won: false, prize: 0, tier: 'nothing', label: '😞 No luck this time' };
+
+    for (let i = 0; i < tickets; i++) {
+      const roll = Math.random();
+      if (roll < 0.0003) {
+        const jackpot = totalCost * 500;
+        bestPrize = { won: true, prize: jackpot, tier: 'jackpot', label: `🎉 JACKPOT!` };
+        break;
+      } else if (roll < 0.02) {
+        const p = totalCost * 8;
+        if (p > bestPrize.prize) bestPrize = { won: true, prize: p, tier: 'major', label: '🥇 Major Win!' };
+      } else if (roll < 0.15) {
+        const p = TICKET_PRICE * 2;
+        if (p > bestPrize.prize) bestPrize = { won: true, prize: p, tier: 'minor', label: '🎟️ Small Win' };
+      }
+    }
+
+    set(produce((draft: GameState) => {
+      draft.money -= totalCost;
+      if (bestPrize.won) {
+        draft.money += bestPrize.prize;
+        draft.lifetimeEarnings += bestPrize.prize;
+        draft.lottery.totalWon += bestPrize.prize;
+        if (bestPrize.tier === 'jackpot') draft.lottery.lastJackpotAt = Date.now();
+      }
+      draft.lottery.ticketsBought += tickets;
+    }));
+
+    return bestPrize;
+  },
+
 }));
