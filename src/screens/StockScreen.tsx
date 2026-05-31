@@ -96,6 +96,7 @@ export function StockScreen() {
       renderItem={({ item }) => (
         <StockCard
           stock={item}
+          money={money}
           canBuy={(shares) => money >= item.currentPrice * shares}
           onBuy={(shares) => handleBuy(item.id, shares)}
           onSell={(shares) => handleSell(item.id, shares)}

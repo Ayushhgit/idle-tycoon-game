@@ -9,12 +9,13 @@ import { Colors } from '../constants/colors';
 
 interface Props {
   stock: Stock;
+  money: number;
   canBuy: (shares: number) => boolean;
   onBuy: (shares: number) => void;
   onSell: (shares: number) => void;
 }
 
-export const StockCard = memo(function StockCard({ stock, canBuy, onBuy, onSell }: Props) {
+export const StockCard = memo(function StockCard({ stock, money, canBuy, onBuy, onSell }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [sharesInput, setSharesInput] = useState('1');
 
@@ -31,6 +32,7 @@ export const StockCard = memo(function StockCard({ stock, canBuy, onBuy, onSell 
   const cost = stock.currentPrice * shares;
   const affordable = canBuy(shares);
   const owned = stock.sharesOwned > 0;
+  const maxBuy = Math.floor(money / stock.currentPrice);
 
   return (
     <View style={[styles.card, { borderColor: moveColor + '2E' }]}>
@@ -108,6 +110,12 @@ export const StockCard = memo(function StockCard({ stock, canBuy, onBuy, onSell 
                 <Text style={styles.quickBtnText}>{q}</Text>
               </TouchableOpacity>
             ))}
+            <TouchableOpacity
+              onPress={() => maxBuy > 0 && setSharesInput(String(maxBuy))}
+              style={[styles.quickBtn, styles.maxQuickBtn]}
+            >
+              <Text style={[styles.quickBtnText, { color: Colors.accent.gold }]}>MAX</Text>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.buttonRow}>
@@ -130,6 +138,30 @@ export const StockCard = memo(function StockCard({ stock, canBuy, onBuy, onSell 
               <LinearGradient colors={['#FF5252', '#C62828']} style={styles.tradeGrad}>
                 <Text style={styles.tradeBtnText}>SELL</Text>
               </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          {/* One-tap max trades */}
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              onPress={() => maxBuy > 0 && onBuy(maxBuy)}
+              disabled={maxBuy <= 0}
+              activeOpacity={0.85}
+              style={[styles.maxBtn, maxBuy <= 0 && styles.disabledBtn]}
+            >
+              <Text style={styles.maxBtnText}>
+                BUY MAX {maxBuy > 0 ? `(${maxBuy})` : ''}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => owned && onSell(stock.sharesOwned)}
+              disabled={!owned}
+              activeOpacity={0.85}
+              style={[styles.maxBtn, !owned && styles.disabledBtn]}
+            >
+              <Text style={styles.maxBtnText}>
+                SELL ALL {owned ? `(${stock.sharesOwned})` : ''}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -240,7 +272,21 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.06)',
   },
   quickBtnText: { color: Colors.text.secondary, fontWeight: '800', fontSize: 13 },
-  buttonRow: { flexDirection: 'row', gap: 10 },
+  maxQuickBtn: {
+    backgroundColor: 'rgba(255,215,0,0.1)',
+    borderColor: 'rgba(255,215,0,0.3)',
+  },
+  buttonRow: { flexDirection: 'row', gap: 10, marginBottom: 8 },
+  maxBtn: {
+    flex: 1,
+    borderRadius: 11,
+    paddingVertical: 10,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+  },
+  maxBtnText: { color: Colors.text.secondary, fontWeight: '800', fontSize: 12, letterSpacing: 0.5 },
   tradeBtn: { flex: 1, borderRadius: 13, overflow: 'hidden' },
   tradeGrad: { paddingVertical: 13, alignItems: 'center' },
   disabledBtn: { opacity: 0.4 },
