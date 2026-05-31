@@ -17,6 +17,26 @@ interface Props {
   onOpenSettings: () => void;
 }
 
+const RANKS = [
+  { min: 0,             label: 'Broke',           emoji: '🪨', color: '#888' },
+  { min: 1_000,         label: 'Side Hustler',     emoji: '💼', color: '#aaa' },
+  { min: 50_000,        label: 'Manager',          emoji: '📋', color: '#66BB6A' },
+  { min: 1_000_000,     label: 'Millionaire',      emoji: '💵', color: '#FFD700' },
+  { min: 50_000_000,    label: 'Tycoon',           emoji: '🏙️', color: '#42A5F5' },
+  { min: 1_000_000_000, label: 'Billionaire',      emoji: '🛥️', color: '#AB47BC' },
+  { min: 1e12,          label: 'Oligarch',         emoji: '✈️', color: '#FF7043' },
+  { min: 1e15,          label: '👑 Emperor',       emoji: '👑', color: '#FF1744' },
+];
+
+function getRank(netWorth: number) {
+  let r = RANKS[0];
+  for (const rank of RANKS) {
+    if (netWorth >= rank.min) r = rank;
+    else break;
+  }
+  return r;
+}
+
 export function MoneyDisplay({ onOpenSettings }: Props) {
   const money = useGameStore((s) => s.money);
   const gems = useGameStore((s) => s.gems);
@@ -44,6 +64,7 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
 
   const now = Date.now();
   const activeEvents = events.filter((e) => e.active && now < e.endAt);
+  const rank = getRank(netWorth);
 
   return (
     <LinearGradient
@@ -55,8 +76,8 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
       {/* Top bar: brand + gems + settings */}
       <View style={styles.topBar}>
         <View style={styles.brandRow}>
-          <Text style={styles.brandMark}>💰</Text>
-          <Text style={styles.brandText}>WEALTH TYCOON</Text>
+          <Text style={styles.brandMark}>{rank.emoji}</Text>
+          <Text style={[styles.brandText, { color: rank.color }]}>{rank.label.toUpperCase()}</Text>
         </View>
 
         <View style={styles.topRight}>
