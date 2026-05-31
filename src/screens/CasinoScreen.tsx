@@ -20,6 +20,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { CasinoResult, CasinoState } from '../types/game';
+import { LotteryPanel } from '../components/LotteryPanel';
 import { Colors } from '../constants/colors';
 import { useHaptics } from '../hooks/useHaptics';
 import { formatNumber, formatMoney } from '../utils/formatters';
@@ -144,6 +145,8 @@ export function CasinoScreen() {
       {casino.history.length > 0 && (
         <HistoryPanel history={casino.history.slice(0, 8)} />
       )}
+
+      <LotteryPanel />
 
       <View style={{ height: 32 }} />
     </ScrollView>
