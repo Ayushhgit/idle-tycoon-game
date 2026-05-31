@@ -49,12 +49,12 @@ export function LotteryPanel() {
       <View style={styles.header}>
         <Text style={styles.title}>🎟️ LOTTERY</Text>
         <View style={styles.oddsChip}>
-          <Text style={styles.oddsText}>Jackpot 1:3000</Text>
+          <Text style={styles.oddsText}>Jackpot 1:3333</Text>
         </View>
       </View>
 
       <Text style={styles.ticketPrice}>
-        {formatMoney(ticketPrice)} / ticket · Win up to {formatMoney(ticketPrice * 500)}
+        {formatMoney(ticketPrice)} / ticket · Jackpot {formatMoney(ticketPrice * 1000)}
       </Text>
 
       {result && (

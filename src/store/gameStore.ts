@@ -1154,35 +1154,43 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     const totalCost = TICKET_PRICE * tickets;
     if (state.money < totalCost || tickets <= 0) return null;
 
-    let bestPrize: LotteryResult = { won: false, prize: 0, tier: 'nothing', label: '😞 No luck this time' };
+    // Each ticket is an INDEPENDENT draw; prizes scale with the single ticket
+    // price (not total spend) and accumulate. House edge built in (EV ≈ 0.69
+    // per ticket) so bulk-buying can't be exploited — the jackpot is the dream.
+    let totalPrize = 0;
+    let bestTier: LotteryResult['tier'] = 'nothing';
+    const tierRank = { nothing: 0, minor: 1, major: 2, jackpot: 3 };
 
     for (let i = 0; i < tickets; i++) {
       const roll = Math.random();
-      if (roll < 0.0003) {
-        const jackpot = totalCost * 500;
-        bestPrize = { won: true, prize: jackpot, tier: 'jackpot', label: `🎉 JACKPOT!` };
-        break;
-      } else if (roll < 0.02) {
-        const p = totalCost * 8;
-        if (p > bestPrize.prize) bestPrize = { won: true, prize: p, tier: 'major', label: '🥇 Major Win!' };
-      } else if (roll < 0.15) {
-        const p = TICKET_PRICE * 2;
-        if (p > bestPrize.prize) bestPrize = { won: true, prize: p, tier: 'minor', label: '🎟️ Small Win' };
-      }
+      let prize = 0;
+      let tier: LotteryResult['tier'] = 'nothing';
+      if (roll < 0.0003) { prize = TICKET_PRICE * 1000; tier = 'jackpot'; }
+      else if (roll < 0.02) { prize = TICKET_PRICE * 10; tier = 'major'; }
+      else if (roll < 0.15) { prize = TICKET_PRICE * 1.5; tier = 'minor'; }
+      totalPrize += prize;
+      if (tierRank[tier] > tierRank[bestTier]) bestTier = tier;
     }
+
+    const label =
+      bestTier === 'jackpot' ? '🎉 JACKPOT!' :
+      bestTier === 'major' ? '🥇 Major Win!' :
+      bestTier === 'minor' ? '🎟️ Small Win' :
+      '😞 No luck this time';
+    const resultOut: LotteryResult = { won: totalPrize > 0, prize: totalPrize, tier: bestTier, label };
 
     set(produce((draft: GameState) => {
       draft.money -= totalCost;
-      if (bestPrize.won) {
-        draft.money += bestPrize.prize;
-        draft.lifetimeEarnings += bestPrize.prize;
-        draft.lottery.totalWon += bestPrize.prize;
-        if (bestPrize.tier === 'jackpot') draft.lottery.lastJackpotAt = Date.now();
+      if (totalPrize > 0) {
+        draft.money += totalPrize;
+        draft.lifetimeEarnings += totalPrize;
+        draft.lottery.totalWon += totalPrize;
+        if (bestTier === 'jackpot') draft.lottery.lastJackpotAt = Date.now();
       }
       draft.lottery.ticketsBought += tickets;
     }));
 
-    return bestPrize;
+    return resultOut;
   },
 
 }));
