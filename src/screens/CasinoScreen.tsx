@@ -21,6 +21,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { CasinoResult, CasinoState } from '../types/game';
 import { LotteryPanel } from '../components/LotteryPanel';
+import { BlackjackGame, TeenPattiGame } from '../components/CardGames';
 import { Colors } from '../constants/colors';
 import { useHaptics } from '../hooks/useHaptics';
 import { formatNumber, formatMoney } from '../utils/formatters';
@@ -37,7 +38,15 @@ const TOKEN_PACKAGES = [
 
 const SLOT_SYMBOLS = ['🍒', '🍋', '🍇', '💎', '7️⃣', '⭐', '💰', '🎰'];
 
-type GameTab = 'slots' | 'coinflip' | 'roulette';
+type GameTab = 'slots' | 'coinflip' | 'roulette' | 'blackjack' | 'teenpatti';
+
+const GAME_TABS: { key: GameTab; emoji: string; label: string }[] = [
+  { key: 'slots',     emoji: '🎰', label: 'SLOTS' },
+  { key: 'coinflip',  emoji: '🪙', label: 'FLIP' },
+  { key: 'roulette',  emoji: '🎡', label: 'ROULETTE' },
+  { key: 'blackjack', emoji: '🃏', label: 'BLACKJACK' },
+  { key: 'teenpatti', emoji: '👑', label: 'TEEN PATTI' },
+];
 
 export function CasinoScreen() {
   const casino = useGameStore((s) => s.casino);
@@ -92,22 +101,24 @@ export function CasinoScreen() {
 
       <StatsBar casino={casino} />
 
-      <View style={styles.gameTabs}>
-        {(['slots', 'coinflip', 'roulette'] as GameTab[]).map((g) => (
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.gameTabs}
+      >
+        {GAME_TABS.map((g) => (
           <TouchableOpacity
-            key={g}
-            onPress={() => { setActiveGame(g); setLastResult(null); }}
-            style={[styles.gameTab, activeGame === g && styles.gameTabActive]}
+            key={g.key}
+            onPress={() => { setActiveGame(g.key); setLastResult(null); }}
+            style={[styles.gameTab, activeGame === g.key && styles.gameTabActive]}
           >
-            <Text style={styles.gameTabEmoji}>
-              {g === 'slots' ? '🎰' : g === 'coinflip' ? '🪙' : '🎡'}
-            </Text>
-            <Text style={[styles.gameTabText, activeGame === g && styles.gameTabTextActive]}>
-              {g === 'slots' ? 'SLOTS' : g === 'coinflip' ? 'COIN FLIP' : 'ROULETTE'}
+            <Text style={styles.gameTabEmoji}>{g.emoji}</Text>
+            <Text style={[styles.gameTabText, activeGame === g.key && styles.gameTabTextActive]}>
+              {g.label}
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
 
       {lastResult && <ResultBanner result={lastResult} />}
 
@@ -141,6 +152,8 @@ export function CasinoScreen() {
           }}
         />
       )}
+      {activeGame === 'blackjack' && <BlackjackGame />}
+      {activeGame === 'teenpatti' && <TeenPattiGame />}
 
       {casino.history.length > 0 && (
         <HistoryPanel history={casino.history.slice(0, 8)} />
@@ -934,21 +947,21 @@ const styles = StyleSheet.create({
   // Game tabs
   gameTabs: {
     flexDirection: 'row',
-    marginHorizontal: 16,
-    marginVertical: 12,
-    backgroundColor: Colors.bg.card,
-    borderRadius: 14,
-    padding: 4,
-    gap: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 8,
   },
   gameTab: {
-    flex: 1,
+    width: 82,
     alignItems: 'center',
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 12,
     gap: 3,
+    backgroundColor: Colors.bg.card,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
   },
-  gameTabActive: { backgroundColor: 'rgba(255,215,0,0.12)' },
+  gameTabActive: { backgroundColor: 'rgba(255,215,0,0.14)', borderColor: 'rgba(255,215,0,0.35)' },
   gameTabEmoji: { fontSize: 20 },
   gameTabText: { color: Colors.text.muted, fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
   gameTabTextActive: { color: Colors.accent.gold },
