@@ -1,19 +1,14 @@
 import { Audio } from 'expo-av';
-
-type SoundKey = 'tap' | 'tap_critical' | 'purchase' | 'achievement' | 'prestige' | 'coin' | 'error';
+import { getSoundUris, SoundKey } from '../utils/soundSynth';
 
 let sounds: Partial<Record<SoundKey, Audio.Sound>> = {};
 let enabled = true;
-
-async function loadSound(key: SoundKey, uri: any): Promise<void> {
-  try {
-    const { sound } = await Audio.Sound.createAsync(uri, { shouldPlay: false });
-    sounds[key] = sound;
-  } catch (_) {}
-}
+let initialized = false;
 
 export const AudioService = {
   async init(): Promise<void> {
+    if (initialized) return;
+    initialized = true;
     try {
       await Audio.setAudioModeAsync({
         playsInSilentModeIOS: true,
@@ -21,6 +16,20 @@ export const AudioService = {
         shouldDuckAndroid: true,
       });
     } catch (_) {}
+
+    // Synthesize all SFX as WAV data URIs and preload them.
+    const uris = getSoundUris();
+    await Promise.all(
+      (Object.keys(uris) as SoundKey[]).map(async (key) => {
+        try {
+          const { sound } = await Audio.Sound.createAsync(
+            { uri: uris[key] },
+            { shouldPlay: false, volume: 1 }
+          );
+          sounds[key] = sound;
+        } catch (_) {}
+      })
+    );
   },
 
   setEnabled(value: boolean): void {
@@ -37,16 +46,11 @@ export const AudioService = {
     } catch (_) {}
   },
 
-  async stopAll(): Promise<void> {
-    for (const sound of Object.values(sounds)) {
-      try { await sound.stopAsync(); } catch (_) {}
-    }
-  },
-
   async unloadAll(): Promise<void> {
     for (const sound of Object.values(sounds)) {
       try { await sound.unloadAsync(); } catch (_) {}
     }
     sounds = {};
+    initialized = false;
   },
 };

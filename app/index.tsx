@@ -29,6 +29,7 @@ import { LuxuryScreen } from '../src/screens/LuxuryScreen';
 import { PrestigeScreen } from '../src/screens/PrestigeScreen';
 import { CasinoScreen } from '../src/screens/CasinoScreen';
 
+import { AudioService } from '../src/services/audioService';
 import { Colors } from '../src/constants/colors';
 import { TabName } from '../src/types/game';
 
@@ -41,12 +42,21 @@ export default function GameScreen() {
 
   const loadSave = useGameStore((s) => s.loadSave);
   const achievements = useGameStore((s) => s.achievements);
+  const soundEnabled = useGameStore((s) => s.settings.soundEnabled);
 
   const { showOfflineModal, offlineEarnings, claimOfflineEarnings } = useOfflineEarnings();
   const { recentlyUnlocked } = useAchievements();
   const { achievementHaptic } = useHaptics();
 
   useGameLoop();
+
+  useEffect(() => {
+    AudioService.init();
+  }, []);
+
+  useEffect(() => {
+    AudioService.setEnabled(soundEnabled);
+  }, [soundEnabled]);
 
   useEffect(() => {
     loadSave().then(() => {
