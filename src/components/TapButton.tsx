@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Text,
   Dimensions,
 } from 'react-native';
@@ -19,6 +20,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { FloatingNumber } from './FloatingNumber';
+import { FortuneWheelModal } from './FortuneWheel';
 import { useHaptics } from '../hooks/useHaptics';
 import { Colors } from '../constants/colors';
 import { GameConfig } from '../constants/gameConfig';
@@ -44,8 +46,13 @@ export function TapButton() {
   const comboCount = useGameStore((s) => s.comboCount);
   const money = useGameStore((s) => s.money);
 
+  const wheel = useGameStore((s) => s.wheel);
   const { tapHaptic, criticalHaptic } = useHaptics();
   const [floats, setFloats] = useState<FloatItem[]>([]);
+  const [showWheel, setShowWheel] = useState(false);
+
+  const today = new Date().toDateString();
+  const hasFreeSpinToday = wheel.lastFreeSpinDate !== today;
   const scale = useSharedValue(1);
   const glowOpacity = useSharedValue(0.3);
   const rotation = useSharedValue(0);
@@ -120,6 +127,22 @@ export function TapButton() {
 
   return (
     <View style={styles.wrapper}>
+      <FortuneWheelModal visible={showWheel} onClose={() => setShowWheel(false)} />
+
+      {/* Fortune wheel FAB */}
+      <TouchableOpacity
+        style={[styles.wheelFab, hasFreeSpinToday && styles.wheelFabFree]}
+        onPress={() => setShowWheel(true)}
+        activeOpacity={0.85}
+      >
+        <Text style={styles.wheelFabEmoji}>🎡</Text>
+        {hasFreeSpinToday && (
+          <View style={styles.freeBadge}>
+            <Text style={styles.freeBadgeText}>FREE</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+
       {floats.map((f) => (
         <FloatingNumber
           key={f.id}
@@ -327,6 +350,34 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: 2,
   },
+  wheelFab: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  wheelFabFree: {
+    borderColor: Colors.accent.gold + '88',
+    backgroundColor: 'rgba(255,215,0,0.1)',
+  },
+  wheelFabEmoji: { fontSize: 26 },
+  freeBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: Colors.accent.red,
+    borderRadius: 6,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+  },
+  freeBadgeText: { color: '#fff', fontSize: 8, fontWeight: '900' },
   upgradeRow: {
     marginTop: 24,
   },
