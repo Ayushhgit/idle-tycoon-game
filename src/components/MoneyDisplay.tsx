@@ -12,6 +12,7 @@ import { useGameStore } from '../store/gameStore';
 import { formatMoney, formatIncomePerSec } from '../utils/formatters';
 import { Colors } from '../constants/colors';
 import { NetWorthModal } from './NetWorthModal';
+import { StatsModal } from './StatsModal';
 
 interface Props {
   onOpenSettings: () => void;
@@ -44,6 +45,7 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
   const netWorth = useGameStore((s) => s.netWorth);
   const events = useGameStore((s) => s.events);
   const [showNetWorth, setShowNetWorth] = useState(false);
+  const [showStats, setShowStats] = useState(false);
 
   const scale = useSharedValue(1);
   const prevMoneyRef = useRef(money);
@@ -75,10 +77,11 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
     >
       {/* Top bar: brand + gems + settings */}
       <View style={styles.topBar}>
-        <View style={styles.brandRow}>
+        <TouchableOpacity style={styles.brandRow} onPress={() => setShowStats(true)} activeOpacity={0.7}>
           <Text style={styles.brandMark}>{rank.emoji}</Text>
           <Text style={[styles.brandText, { color: rank.color }]}>{rank.label.toUpperCase()}</Text>
-        </View>
+          <Text style={styles.brandChevron}>›</Text>
+        </TouchableOpacity>
 
         <View style={styles.topRight}>
           <View style={styles.gemPill}>
@@ -138,6 +141,13 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
       )}
 
       <NetWorthModal visible={showNetWorth} onClose={() => setShowNetWorth(false)} />
+      <StatsModal
+        visible={showStats}
+        onClose={() => setShowStats(false)}
+        rankLabel={rank.label}
+        rankEmoji={rank.emoji}
+        rankColor={rank.color}
+      />
     </LinearGradient>
   );
 }
@@ -164,6 +174,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 2,
   },
+  brandChevron: { color: Colors.text.muted, fontSize: 16, fontWeight: '900', marginLeft: 2 },
   topRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   gemPill: {
     flexDirection: 'row',
