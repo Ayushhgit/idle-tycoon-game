@@ -179,6 +179,8 @@ export interface GameActions {
   refreshPassiveIncome: () => void;
   buyTokens: (packageId: string) => boolean;
   sellTokens: (amount: number) => number;
+  casinoStake: (bet: number) => boolean;
+  casinoResolve: (game: CasinoGameType, bet: number, payout: number, detail: string) => void;
   spinWheel: (useGems: boolean) => WheelPrize | null;
   buyLotteryTicket: (tickets: number) => LotteryResult | null;
   playSlots: (bet: number) => CasinoResult | null;
@@ -887,6 +889,35 @@ export const useGameStore = create<GameStore>()((set, get) => ({
       draft.money += cash;
     }));
     return cash;
+  },
+
+  casinoStake(bet) {
+    // Deduct the bet up-front for interactive games (blackjack/teen patti).
+    const state = get();
+    if (bet <= 0 || state.casino.tokens < bet) return false;
+    set(produce((draft: GameState) => {
+      draft.casino.tokens -= bet;
+      draft.casino.gamesPlayed += 1;
+    }));
+    return true;
+  },
+
+  casinoResolve(game, bet, payout, detail) {
+    // Settle an interactive game: credit payout, update stats + history.
+    const won = payout > bet;
+    const result: CasinoResult = {
+      game, bet, payout, net: payout - bet, won, detail, timestamp: Date.now(),
+    };
+    set(produce((draft: GameState) => {
+      draft.casino.tokens += payout;
+      if (payout > 0 && won) {
+        draft.casino.totalTokensWon += payout;
+        if (payout > draft.casino.biggestWin) draft.casino.biggestWin = payout;
+      } else if (payout < bet) {
+        draft.casino.totalTokensLost += bet - payout;
+      }
+      draft.casino.history = [result, ...draft.casino.history.slice(0, 49)];
+    }));
   },
 
   playSlots(bet) {

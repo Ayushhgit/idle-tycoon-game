@@ -152,7 +152,7 @@ export interface FloatingNumberItem {
   isCritical: boolean;
 }
 
-export type CasinoGameType = 'slots' | 'coinflip' | 'roulette';
+export type CasinoGameType = 'slots' | 'coinflip' | 'roulette' | 'blackjack' | 'teenpatti';
 
 export interface CasinoResult {
   game: CasinoGameType;
