@@ -803,7 +803,7 @@ function BetControls({
 
 function HistoryPanel({ history }: { history: CasinoResult[] }) {
   const GAME_EMOJI: Record<string, string> = {
-    slots: '🎰', coinflip: '🪙', roulette: '🎡',
+    slots: '🎰', coinflip: '🪙', roulette: '🎡', blackjack: '🃏', teenpatti: '👑',
   };
   return (
     <View style={styles.historyPanel}>
@@ -814,8 +814,13 @@ function HistoryPanel({ history }: { history: CasinoResult[] }) {
           <View style={styles.historyInfo}>
             <Text style={styles.historyDetail} numberOfLines={1}>{r.detail}</Text>
           </View>
-          <Text style={[styles.historyNet, { color: r.won ? Colors.accent.green : Colors.accent.red }]}>
-            {r.won ? '+' : '−'}{formatNumber(Math.abs(r.net))}
+          <Text
+            style={[
+              styles.historyNet,
+              { color: r.net > 0 ? Colors.accent.green : r.net < 0 ? Colors.accent.red : Colors.text.muted },
+            ]}
+          >
+            {r.net > 0 ? '+' : r.net < 0 ? '−' : '±'}{formatNumber(Math.abs(r.net))}
           </Text>
         </View>
       ))}
