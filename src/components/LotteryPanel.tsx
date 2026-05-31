@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { LotteryResult } from '../types/game';
 import { formatMoney } from '../utils/formatters';
+import { useHaptics } from '../hooks/useHaptics';
 import { Colors } from '../constants/colors';
 
 const TICKET_OPTIONS = [1, 5, 10, 50];
@@ -15,12 +16,17 @@ export function LotteryPanel() {
   const lotteryState = useGameStore((s) => s.lottery);
 
   const [result, setResult] = useState<LotteryResult | null>(null);
+  const { criticalHaptic, errorHaptic } = useHaptics();
 
   const ticketPrice = Math.max(100, netWorth * 0.001);
 
   const handleBuy = (tickets: number) => {
     const r = buyLotteryTicket(tickets);
-    if (r) setResult(r);
+    if (r) {
+      setResult(r);
+      if (r.won) criticalHaptic();
+      else errorHaptic();
+    }
   };
 
   const tierColor = result

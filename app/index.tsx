@@ -17,6 +17,7 @@ import { useHaptics } from '../src/hooks/useHaptics';
 import { MoneyDisplay } from '../src/components/MoneyDisplay';
 import { TapButton } from '../src/components/TapButton';
 import { TabBar } from '../src/components/TabBar';
+import { Confetti } from '../src/components/Confetti';
 import { DailyRewardModal } from '../src/components/DailyRewardModal';
 import { OfflineEarningsModal } from '../src/components/OfflineEarningsModal';
 import { SettingsModal } from '../src/components/SettingsModal';
@@ -36,6 +37,7 @@ export default function GameScreen() {
   const [showDailyReward, setShowDailyReward] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [achievementToast, setAchievementToast] = useState<string | null>(null);
+  const [confettiTrigger, setConfettiTrigger] = useState(0);
 
   const loadSave = useGameStore((s) => s.loadSave);
   const achievements = useGameStore((s) => s.achievements);
@@ -66,6 +68,7 @@ export default function GameScreen() {
       if (ach) {
         achievementHaptic();
         setAchievementToast(`${ach.emoji} ${ach.name}`);
+        setConfettiTrigger((c) => c + 1);
         // Own timer, NOT tied to effect cleanup. Previously the cleanup ran when
         // recentlyUnlocked reset to [] and cancelled the dismiss timer, so the
         // toast got stuck on screen forever.
@@ -146,6 +149,8 @@ export default function GameScreen() {
         onClaim={claimOfflineEarnings}
       />
       <SettingsModal visible={showSettings} onClose={() => setShowSettings(false)} />
+
+      <Confetti trigger={confettiTrigger} />
     </SafeAreaView>
   );
 }

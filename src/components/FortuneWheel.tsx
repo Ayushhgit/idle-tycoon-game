@@ -21,6 +21,7 @@ import { WheelPrize } from '../types/game';
 import { WHEEL_SEGMENTS } from '../constants/wheel';
 import { formatMoney } from '../utils/formatters';
 import { useHaptics } from '../hooks/useHaptics';
+import { Confetti } from './Confetti';
 import { Colors } from '../constants/colors';
 
 const { width } = Dimensions.get('window');
@@ -54,6 +55,7 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
 
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<WheelPrize | null>(null);
+  const [confettiTrigger, setConfettiTrigger] = useState(0);
   const rotation = useSharedValue(0);
   const pendingPrize = useRef<WheelPrize | null>(null);
 
@@ -65,8 +67,12 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
     const p = pendingPrize.current;
     setResult(p);
     setSpinning(false);
-    if (p && p.type !== 'nothing') criticalHaptic();
-    else errorHaptic();
+    if (p && p.type !== 'nothing') {
+      criticalHaptic();
+      setConfettiTrigger((c) => c + 1);
+    } else {
+      errorHaptic();
+    }
   };
 
   const doSpin = (useGems: boolean) => {
@@ -207,6 +213,8 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
             <Text style={styles.closeBtnText}>CLOSE</Text>
           </TouchableOpacity>
         </View>
+
+        <Confetti trigger={confettiTrigger} />
       </View>
     </Modal>
   );
