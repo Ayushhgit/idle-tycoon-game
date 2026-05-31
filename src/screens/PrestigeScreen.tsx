@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -14,6 +14,7 @@ import { calcPrestigeTokens, calcPrestigeRequirement } from '../utils/calculatio
 import { Colors } from '../constants/colors';
 import { GameConfig } from '../constants/gameConfig';
 import { useHaptics } from '../hooks/useHaptics';
+import { Confetti } from '../components/Confetti';
 
 const { width } = Dimensions.get('window');
 
@@ -22,6 +23,7 @@ export function PrestigeScreen() {
   const netWorth = useGameStore((s) => s.netWorth);
   const performPrestige = useGameStore((s) => s.performPrestige);
   const { achievementHaptic } = useHaptics();
+  const [confettiTrigger, setConfettiTrigger] = useState(0);
 
   const requirement = calcPrestigeRequirement(prestigeData.count);
   const canPrestige = netWorth >= requirement;
@@ -53,8 +55,11 @@ export function PrestigeScreen() {
         {
           text: 'PRESTIGE!',
           onPress: () => {
-            achievementHaptic();
-            performPrestige();
+            const ok = performPrestige();
+            if (ok) {
+              achievementHaptic();
+              setConfettiTrigger((c) => c + 1);
+            }
           },
         },
       ]
@@ -90,37 +95,54 @@ export function PrestigeScreen() {
   ];
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <LinearGradient
+        colors={['rgba(255,109,0,0.18)', 'transparent']}
+        style={styles.headerBgGlow}
+      />
       <View style={styles.header}>
         <Animated.View style={[styles.glowOrb, glowStyle]} />
+        <Animated.View style={[styles.glowOrbInner, glowStyle]} />
         <Animated.View style={[styles.spinRing, rotateStyle]}>
           {Array.from({ length: 8 }).map((_, i) => (
             <View
               key={i}
               style={[
                 styles.orbDot,
-                { transform: [{ rotate: `${i * 45}deg` }, { translateY: -80 }] },
+                { transform: [{ rotate: `${i * 45}deg` }, { translateY: -82 }] },
               ]}
             />
           ))}
         </Animated.View>
-        <Text style={styles.prestigeEmoji}>✨</Text>
+        <View style={styles.emojiDisc}>
+          <LinearGradient colors={['#FF8A3D', '#FF3D00']} style={StyleSheet.absoluteFill} />
+          <Text style={styles.prestigeEmoji}>✨</Text>
+        </View>
         <Text style={styles.prestigeCount}>PRESTIGE {prestigeData.count}</Text>
-        <Text style={styles.tokenCount}>💠 {prestigeData.tokens} Tokens</Text>
+        <View style={styles.tokenChip}>
+          <Text style={styles.tokenChipText}>💠 {prestigeData.tokens} Tokens</Text>
+        </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>CURRENT BONUSES</Text>
+        <Text style={styles.sectionTitle}>PERMANENT BONUSES</Text>
         {PRESTIGE_PERKS.map((perk) => (
           <View key={perk.label} style={styles.perkRow}>
-            <Text style={styles.perkEmoji}>{perk.emoji}</Text>
+            <View style={[styles.perkIconChip, { backgroundColor: perk.color + '22', borderColor: perk.color + '44' }]}>
+              <Text style={styles.perkEmoji}>{perk.emoji}</Text>
+            </View>
             <Text style={styles.perkLabel}>{perk.label}</Text>
             <View style={styles.perkValues}>
-              <Text style={[styles.perkCurrent, { color: perk.color }]}>{perk.current}</Text>
+              <View style={[styles.perkPill, { backgroundColor: perk.color + '1A' }]}>
+                <Text style={[styles.perkCurrent, { color: perk.color }]}>{perk.current}</Text>
+              </View>
               {canPrestige && (
                 <>
                   <Text style={styles.arrow}>→</Text>
-                  <Text style={[styles.perkAfter, { color: perk.color }]}>{perk.after}</Text>
+                  <View style={[styles.perkPill, { backgroundColor: perk.color + '33' }]}>
+                    <Text style={[styles.perkAfter, { color: perk.color }]}>{perk.after}</Text>
+                  </View>
                 </>
               )}
             </View>
@@ -193,60 +215,97 @@ export function PrestigeScreen() {
 
       <View style={{ height: 32 }} />
     </ScrollView>
+    <Confetti trigger={confettiTrigger} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  headerBgGlow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 260,
+  },
   header: {
-    height: 240,
+    height: 250,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    overflow: 'hidden',
   },
   glowOrb: {
     position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
     backgroundColor: '#FF6D00',
+    opacity: 0.18,
+  },
+  glowOrbInner: {
+    position: 'absolute',
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    backgroundColor: '#FF3D00',
+    opacity: 0.35,
   },
   spinRing: {
     position: 'absolute',
-    width: 180,
-    height: 180,
+    width: 184,
+    height: 184,
     alignItems: 'center',
     justifyContent: 'center',
   },
   orbDot: {
     position: 'absolute',
-    width: 8,
-    height: 8,
+    width: 7,
+    height: 7,
     borderRadius: 4,
-    backgroundColor: '#FF6D00',
+    backgroundColor: '#FFAB40',
   },
-  prestigeEmoji: { fontSize: 60, zIndex: 10 },
+  emojiDisc: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    zIndex: 10,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.25)',
+    shadowColor: '#FF6D00',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 24,
+    elevation: 16,
+  },
+  prestigeEmoji: { fontSize: 50 },
   prestigeCount: {
     color: Colors.text.primary,
     fontSize: 24,
     fontWeight: '900',
     letterSpacing: 2,
     zIndex: 10,
-    marginTop: 8,
+    marginTop: 14,
   },
-  tokenCount: {
-    color: Colors.accent.purple,
-    fontSize: 16,
-    fontWeight: '700',
+  tokenChip: {
     zIndex: 10,
-    marginTop: 4,
+    marginTop: 8,
+    backgroundColor: 'rgba(213,0,249,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(213,0,249,0.4)',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 5,
   },
+  tokenChipText: { color: Colors.accent.purpleLight, fontSize: 14, fontWeight: '800' },
   section: { paddingHorizontal: 16, marginBottom: 20 },
   sectionTitle: {
     color: Colors.text.muted,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
     letterSpacing: 2,
     marginBottom: 12,
   },
@@ -254,16 +313,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.bg.card,
-    borderRadius: 12,
-    padding: 14,
+    borderRadius: 16,
+    padding: 12,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
   },
-  perkEmoji: { fontSize: 22, marginRight: 12 },
-  perkLabel: { flex: 1, color: Colors.text.secondary, fontWeight: '600', fontSize: 14 },
-  perkValues: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  perkCurrent: { fontWeight: '800', fontSize: 15 },
-  arrow: { color: Colors.text.muted, fontSize: 14 },
-  perkAfter: { fontWeight: '900', fontSize: 15 },
+  perkIconChip: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  perkEmoji: { fontSize: 20 },
+  perkLabel: { flex: 1, color: Colors.text.secondary, fontWeight: '700', fontSize: 14 },
+  perkValues: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  perkPill: {
+    borderRadius: 9,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+  },
+  perkCurrent: { fontWeight: '800', fontSize: 14 },
+  arrow: { color: Colors.text.muted, fontSize: 13 },
+  perkAfter: { fontWeight: '900', fontSize: 14 },
   requireCard: {
     backgroundColor: Colors.bg.card,
     borderRadius: 16,
