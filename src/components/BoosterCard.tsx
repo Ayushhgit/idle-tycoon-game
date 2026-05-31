@@ -1,0 +1,225 @@
+import React, { memo, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '../constants/colors';
+import { formatDuration } from '../utils/formatters';
+import { GameState } from '../types/game';
+
+type BoosterKey = keyof GameState['boosters'];
+
+interface BoosterDef {
+  key: BoosterKey;
+  name: string;
+  description: string;
+  emoji: string;
+  gemCost: number;
+  colors: [string, string];
+}
+
+const BOOSTERS: BoosterDef[] = [
+  {
+    key: 'incomeBoost2x',
+    name: '2x Income',
+    description: 'Double passive income for 2 minutes',
+    emoji: '⚡',
+    gemCost: 20,
+    colors: ['#FFD700', '#FF8C00'],
+  },
+  {
+    key: 'tapMultiplier3x',
+    name: '3x Tap Power',
+    description: 'Triple tap earnings for 90 seconds',
+    emoji: '👆',
+    gemCost: 15,
+    colors: ['#2979FF', '#1565C0'],
+  },
+  {
+    key: 'autoClicker',
+    name: 'Auto Clicker',
+    description: 'Auto-taps 1x/sec for 60 seconds',
+    emoji: '🤖',
+    gemCost: 10,
+    colors: ['#AB47BC', '#4A148C'],
+  },
+  {
+    key: 'investmentBoost',
+    name: 'Investment Boost',
+    description: '10% off stock purchases for 3 minutes',
+    emoji: '📈',
+    gemCost: 25,
+    colors: ['#00E676', '#00C853'],
+  },
+];
+
+interface Props {
+  boosters: GameState['boosters'];
+  gems: number;
+  onActivate: (key: BoosterKey) => void;
+}
+
+export function BoosterPanel({ boosters, gems, onActivate }: Props) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.sectionTitle}>⚡ BOOSTERS</Text>
+      {BOOSTERS.map((def) => {
+        const state = boosters[def.key];
+        const remaining = state.active ? Math.max(0, state.endsAt - Date.now()) : 0;
+        const isActive = state.active && remaining > 0;
+        const canAfford = gems >= def.gemCost;
+        return (
+          <BoosterCard
+            key={def.key}
+            def={def}
+            isActive={isActive}
+            remaining={remaining}
+            canAfford={canAfford}
+            onActivate={() => onActivate(def.key)}
+          />
+        );
+      })}
+    </View>
+  );
+}
+
+const BoosterCard = memo(function BoosterCard({
+  def,
+  isActive,
+  remaining,
+  canAfford,
+  onActivate,
+}: {
+  def: BoosterDef;
+  isActive: boolean;
+  remaining: number;
+  canAfford: boolean;
+  onActivate: () => void;
+}) {
+  const pulse = useSharedValue(1);
+
+  useEffect(() => {
+    if (isActive) {
+      pulse.value = withRepeat(
+        withSequence(
+          withTiming(1.03, { duration: 600 }),
+          withTiming(1, { duration: 600 })
+        ),
+        -1
+      );
+    } else {
+      pulse.value = 1;
+    }
+  }, [isActive]);
+
+  const cardStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse.value }],
+  }));
+
+  return (
+    <Animated.View style={cardStyle}>
+      <View style={[styles.card, isActive && styles.activeCard]}>
+        {isActive && (
+          <LinearGradient
+            colors={[def.colors[0] + '20', 'transparent']}
+            style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
+          />
+        )}
+        <View style={[styles.iconArea, { backgroundColor: def.colors[0] + '25' }]}>
+          <Text style={styles.emoji}>{def.emoji}</Text>
+        </View>
+
+        <View style={styles.info}>
+          <Text style={styles.name}>{def.name}</Text>
+          <Text style={styles.description}>{def.description}</Text>
+          {isActive && (
+            <Text style={[styles.timer, { color: def.colors[0] }]}>
+              ⏱ {formatDuration(remaining)} remaining
+            </Text>
+          )}
+        </View>
+
+        <TouchableOpacity
+          onPress={onActivate}
+          disabled={isActive || !canAfford}
+          style={[styles.buyBtn, (isActive || !canAfford) && styles.buyBtnDisabled]}
+        >
+          <LinearGradient
+            colors={isActive ? ['#333', '#222'] : canAfford ? def.colors : ['#333', '#222']}
+            style={styles.buyGrad}
+          >
+            {isActive ? (
+              <Text style={styles.activeText}>ACTIVE</Text>
+            ) : (
+              <>
+                <Text style={styles.gemEmoji}>💎</Text>
+                <Text style={styles.gemCost}>{def.gemCost}</Text>
+              </>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
+  );
+});
+
+const styles = StyleSheet.create({
+  container: { paddingVertical: 8 },
+  sectionTitle: {
+    color: Colors.text.secondary,
+    fontWeight: '800',
+    fontSize: 13,
+    letterSpacing: 1.5,
+    marginBottom: 10,
+    paddingHorizontal: 16,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.bg.card,
+    borderRadius: 14,
+    marginVertical: 5,
+    marginHorizontal: 16,
+    padding: 12,
+    overflow: 'hidden',
+  },
+  activeCard: {
+    borderWidth: 1,
+    borderColor: 'rgba(255,215,0,0.2)',
+  },
+  iconArea: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  emoji: { fontSize: 24 },
+  info: { flex: 1 },
+  name: { color: Colors.text.primary, fontWeight: '800', fontSize: 14 },
+  description: { color: Colors.text.muted, fontSize: 11, marginTop: 2 },
+  timer: { fontWeight: '700', fontSize: 12, marginTop: 3 },
+  buyBtn: { borderRadius: 10, overflow: 'hidden' },
+  buyBtnDisabled: { opacity: 0.5 },
+  buyGrad: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    gap: 4,
+  },
+  gemEmoji: { fontSize: 14 },
+  gemCost: { color: '#fff', fontWeight: '800', fontSize: 14 },
+  activeText: {
+    color: Colors.accent.green,
+    fontWeight: '800',
+    fontSize: 12,
+    paddingHorizontal: 4,
+  },
+});
