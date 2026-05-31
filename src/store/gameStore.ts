@@ -20,6 +20,7 @@ import { INITIAL_STOCKS } from '../constants/stocks';
 import { INITIAL_PROPERTIES } from '../constants/properties';
 import { INITIAL_LUXURY_ITEMS } from '../constants/luxury';
 import { INITIAL_ACHIEVEMENTS } from '../constants/achievements';
+import { WHEEL_SEGMENTS, wheelAmountFor } from '../constants/wheel';
 import { GameConfig } from '../constants/gameConfig';
 import { Storage } from '../lib/storage';
 import {
@@ -1068,27 +1069,27 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     if (!hasFree && !useGems) return null;
 
     const income = state.passiveIncome > 0 ? state.passiveIncome : 1;
-    const PRIZES: WheelPrize[] = [
-      { type: 'money',      label: 'Small Cash',     emoji: '💵', amount: income * 30,    color: '#FFD700' },
-      { type: 'gems',       label: '5 Gems',          emoji: '💎', amount: 5,              color: '#00E5FF' },
-      { type: 'money',      label: 'Big Cash',        emoji: '🤑', amount: income * 120,   color: '#FFB300' },
-      { type: 'nothing',    label: 'Try Again',       emoji: '💨', amount: 0,              color: '#555555' },
-      { type: 'tokens',     label: '50 Tokens',       emoji: '🎫', amount: 50,             color: '#AB47BC' },
-      { type: 'gems',       label: '15 Gems',         emoji: '💎', amount: 15,             color: '#00E5FF' },
-      { type: 'money',      label: 'Tap Stash',       emoji: '💸', amount: income * 60,    color: '#FF8C00' },
-      { type: 'tokens',     label: '200 Tokens',      emoji: '🎫', amount: 200,            color: '#CE93D8' },
-      { type: 'nothing',    label: 'Nothing',         emoji: '🌀', amount: 0,              color: '#333333' },
-      { type: 'multiplier', label: '2x Income 60s',   emoji: '⚡', amount: 60_000,         color: '#FF1744' },
-    ];
 
-    const WEIGHTS = [22, 12, 8, 16, 10, 6, 12, 5, 15, 4];
-    const totalW = WEIGHTS.reduce((a, b) => a + b, 0);
+    // Weighted pick over the SHARED segment list, so the visual wheel can land
+    // on exactly this index.
+    const totalW = WHEEL_SEGMENTS.reduce((a, b) => a + b.weight, 0);
     let r = Math.random() * totalW;
-    let prize = PRIZES[0];
-    for (let i = 0; i < PRIZES.length; i++) {
-      if (r < WEIGHTS[i]) { prize = PRIZES[i]; break; }
-      r -= WEIGHTS[i];
+    let index = 0;
+    for (let i = 0; i < WHEEL_SEGMENTS.length; i++) {
+      if (r < WHEEL_SEGMENTS[i].weight) { index = i; break; }
+      r -= WHEEL_SEGMENTS[i].weight;
     }
+
+    const seg = WHEEL_SEGMENTS[index];
+    const amount = wheelAmountFor(index, income, state.tapPower);
+    const prize: WheelPrize = {
+      type: seg.type,
+      label: seg.label,
+      emoji: seg.emoji,
+      color: seg.color,
+      amount,
+      index,
+    };
 
     set(produce((draft: GameState) => {
       if (hasFree) {
@@ -1099,16 +1100,15 @@ export const useGameStore = create<GameStore>()((set, get) => ({
       draft.wheel.totalSpins += 1;
 
       if (prize.type === 'money') {
-        const gain = Math.max(100, prize.amount);
-        draft.money += gain;
-        draft.lifetimeEarnings += gain;
+        draft.money += amount;
+        draft.lifetimeEarnings += amount;
       } else if (prize.type === 'gems') {
-        draft.gems += prize.amount;
+        draft.gems += amount;
       } else if (prize.type === 'tokens') {
-        draft.casino.tokens += prize.amount;
+        draft.casino.tokens += amount;
       } else if (prize.type === 'multiplier') {
         draft.boosters.incomeBoost2x.active = true;
-        draft.boosters.incomeBoost2x.endsAt = Date.now() + prize.amount;
+        draft.boosters.incomeBoost2x.endsAt = Date.now() + amount;
       }
     }));
 
