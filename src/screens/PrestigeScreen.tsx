@@ -10,7 +10,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { formatMoney } from '../utils/formatters';
-import { calcPrestigeTokens } from '../utils/calculations';
+import { calcPrestigeTokens, calcPrestigeRequirement } from '../utils/calculations';
 import { Colors } from '../constants/colors';
 import { GameConfig } from '../constants/gameConfig';
 import { useHaptics } from '../hooks/useHaptics';
@@ -23,7 +23,8 @@ export function PrestigeScreen() {
   const performPrestige = useGameStore((s) => s.performPrestige);
   const { achievementHaptic } = useHaptics();
 
-  const canPrestige = netWorth >= GameConfig.prestige.minimumNetWorth;
+  const requirement = calcPrestigeRequirement(prestigeData.count);
+  const canPrestige = netWorth >= requirement;
   const tokens = canPrestige ? calcPrestigeTokens(netWorth, prestigeData.count) : 0;
 
   const glow = useSharedValue(0.5);
@@ -134,8 +135,8 @@ export function PrestigeScreen() {
             colors={['rgba(255,109,0,0.1)', 'rgba(255,61,0,0.05)']}
             style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
           />
-          <Text style={styles.reqLabel}>Minimum Net Worth Required</Text>
-          <Text style={styles.reqValue}>{formatMoney(GameConfig.prestige.minimumNetWorth)}</Text>
+          <Text style={styles.reqLabel}>Net Worth Required (×8 each prestige)</Text>
+          <Text style={styles.reqValue}>{formatMoney(requirement)}</Text>
           <Text style={styles.yourLabel}>Your Net Worth</Text>
           <Text style={[styles.yourValue, { color: canPrestige ? Colors.accent.green : Colors.accent.red }]}>
             {formatMoney(netWorth)}
@@ -164,7 +165,7 @@ export function PrestigeScreen() {
           <Text style={styles.prestigeBtnText}>
             {canPrestige
               ? `✨ PRESTIGE (+${tokens} tokens)`
-              : `🔒 Need ${formatMoney(GameConfig.prestige.minimumNetWorth)} net worth`}
+              : `🔒 Need ${formatMoney(requirement)}`}
           </Text>
         </LinearGradient>
       </TouchableOpacity>
@@ -172,7 +173,7 @@ export function PrestigeScreen() {
       {!canPrestige && (
         <View style={styles.progressSection}>
           <Text style={styles.progressLabel}>
-            Progress: {Math.min(100, (netWorth / GameConfig.prestige.minimumNetWorth) * 100).toFixed(1)}%
+            Progress: {Math.min(100, (netWorth / requirement) * 100).toFixed(1)}%
           </Text>
           <View style={styles.progressBg}>
             <LinearGradient
@@ -180,7 +181,7 @@ export function PrestigeScreen() {
               style={[
                 styles.progressFill,
                 {
-                  width: `${Math.min(100, (netWorth / GameConfig.prestige.minimumNetWorth) * 100)}%` as any,
+                  width: `${Math.min(100, (netWorth / requirement) * 100)}%` as any,
                 },
               ]}
               start={{ x: 0, y: 0 }}
