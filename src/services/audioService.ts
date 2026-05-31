@@ -4,6 +4,8 @@ import { getSoundUris, SoundKey } from '../utils/soundSynth';
 let sounds: Partial<Record<SoundKey, Audio.Sound>> = {};
 let enabled = true;
 let initialized = false;
+const lastPlayed: Partial<Record<SoundKey, number>> = {};
+const THROTTLE_MS = 55; // avoid spamming expo-av on rapid taps
 
 export const AudioService = {
   async init(): Promise<void> {
@@ -38,11 +40,13 @@ export const AudioService = {
 
   async play(key: SoundKey): Promise<void> {
     if (!enabled) return;
+    const now = Date.now();
+    if (now - (lastPlayed[key] ?? 0) < THROTTLE_MS) return;
+    lastPlayed[key] = now;
     const sound = sounds[key];
     if (!sound) return;
     try {
-      await sound.setPositionAsync(0);
-      await sound.playAsync();
+      await sound.replayAsync();
     } catch (_) {}
   },
 
