@@ -86,6 +86,9 @@ export function useGameLoop() {
     if (deltaAch >= 2000) {
       updateNetWorth();
       checkAchievements();
+      // Keep passive income in sync with active events/boosters (and catch
+      // their expiry) within 2s, instead of only on the 60s event cycle.
+      refreshPassiveIncome();
       lastAchievementCheckRef.current = now;
     }
 

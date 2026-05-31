@@ -571,6 +571,8 @@ export const useGameStore = create<GameStore>()((set, get) => ({
         b.endsAt = now + durations[key];
       })
     );
+    // Apply income boosters to passive income immediately.
+    get().refreshPassiveIncome();
     return true;
   },
 
