@@ -173,6 +173,34 @@ export interface CasinoState {
   history: CasinoResult[];
 }
 
+export type WheelPrizeType = 'money' | 'gems' | 'tokens' | 'multiplier' | 'nothing';
+
+export interface WheelPrize {
+  type: WheelPrizeType;
+  label: string;
+  emoji: string;
+  amount: number;
+  color: string;
+}
+
+export interface WheelState {
+  lastFreeSpinDate: string;
+  totalSpins: number;
+}
+
+export interface LotteryState {
+  ticketsBought: number;
+  lastJackpotAt: number;
+  totalWon: number;
+}
+
+export interface LotteryResult {
+  won: boolean;
+  prize: number;
+  tier: 'jackpot' | 'major' | 'minor' | 'nothing';
+  label: string;
+}
+
 export interface TokenPackage {
   id: string;
   tokens: number;
@@ -206,6 +234,8 @@ export interface GameState {
   events: WorldEvent[];
   settings: SettingsState;
   casino: CasinoState;
+  wheel: WheelState;
+  lottery: LotteryState;
   lastSaved: number;
   lastActive: number;
   offlineEarnings: number;

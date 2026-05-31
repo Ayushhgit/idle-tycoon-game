@@ -107,8 +107,14 @@ export function calcOfflineEarnings(passiveIncome: number, elapsedMs: number): n
   return passiveIncome * elapsedSecs * GameConfig.offline.offlineEfficiency;
 }
 
-export function calcPrestigeTokens(netWorth: number, _prestigeCount: number): number {
-  const base = Math.floor(Math.log10(netWorth / GameConfig.prestige.minimumNetWorth) * 3) + 1;
+export function calcPrestigeRequirement(prestigeCount: number): number {
+  // Each prestige costs 8x more than the last.
+  return GameConfig.prestige.minimumNetWorth * Math.pow(8, prestigeCount);
+}
+
+export function calcPrestigeTokens(netWorth: number, prestigeCount: number): number {
+  const requirement = calcPrestigeRequirement(prestigeCount);
+  const base = Math.floor(Math.log10(netWorth / requirement) * 3) + 1;
   return Math.max(1, base);
 }
 
