@@ -181,6 +181,7 @@ export interface WheelPrize {
   emoji: string;
   amount: number;
   color: string;
+  index: number;
 }
 
 export interface WheelState {
