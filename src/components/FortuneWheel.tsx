@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -62,6 +62,14 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
   const today = new Date().toDateString();
   const hasFree = wheel.lastFreeSpinDate !== today;
   const canGemSpin = gems >= 3;
+
+  // Clear the previous result whenever the sheet is reopened.
+  useEffect(() => {
+    if (!visible) {
+      setResult(null);
+      setSpinning(false);
+    }
+  }, [visible]);
 
   const finish = () => {
     const p = pendingPrize.current;
