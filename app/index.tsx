@@ -14,9 +14,9 @@ import { useOfflineEarnings } from '../src/hooks/useOfflineEarnings';
 import { useAchievements } from '../src/hooks/useAchievements';
 import { useHaptics } from '../src/hooks/useHaptics';
 
-import { MoneyDisplay } from '../src/components/MoneyDisplay';
+import { CompactHeader } from '../src/components/CompactHeader';
+import { TopTabs } from '../src/components/TopTabs';
 import { TapButton } from '../src/components/TapButton';
-import { TabBar } from '../src/components/TabBar';
 import { Confetti } from '../src/components/Confetti';
 import { DailyRewardModal } from '../src/components/DailyRewardModal';
 import { OfflineEarningsModal } from '../src/components/OfflineEarningsModal';
@@ -114,24 +114,21 @@ export default function GameScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <AppBackground />
 
-      <MoneyDisplay onOpenSettings={() => setShowSettings(true)} />
+      <CompactHeader onOpenSettings={() => setShowSettings(true)} />
+      <TopTabs activeTab={activeTab} onTabPress={setActiveTab} />
 
       <View style={styles.content}>
         {activeTab === 'tap' ? (
           <TapButton />
         ) : (
-          <Animated.View style={styles.screenWrapper} entering={FadeIn.duration(200)}>
+          <Animated.View style={styles.screenWrapper} entering={FadeIn.duration(200)} key={activeTab}>
             {renderTabContent()}
           </Animated.View>
         )}
       </View>
-
-      <SafeAreaView edges={['bottom']} style={styles.tabSafe}>
-        <TabBar activeTab={activeTab} onTabPress={setActiveTab} />
-      </SafeAreaView>
 
       {achievementToast !== null && (
         <Animated.View
@@ -170,10 +167,9 @@ const styles = StyleSheet.create({
   },
   content: { flex: 1 },
   screenWrapper: { flex: 1 },
-  tabSafe: { backgroundColor: 'transparent' },
   achievementToast: {
     position: 'absolute',
-    bottom: 90,
+    bottom: 28,
     left: 16,
     right: 16,
     borderRadius: 16,

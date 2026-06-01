@@ -5,9 +5,9 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withSequence,
-  withTiming,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { Business } from '../types/game';
 import { formatMoney, formatIncomePerSec } from '../utils/formatters';
 import { calcBusinessCost, calcBusinessIncome } from '../utils/calculations';
@@ -49,100 +49,84 @@ export const BusinessCard = memo(function BusinessCard({
   const handlePress = () => {
     if (!isUnlocked) return;
     scale.value = withSequence(
-      withSpring(0.95, { damping: 10, stiffness: 400 }),
-      withSpring(1, { damping: 10, stiffness: 300 })
+      withSpring(0.97, { damping: 12, stiffness: 400 }),
+      withSpring(1, { damping: 12, stiffness: 300 })
     );
     if (business.owned) onUpgrade();
     else onBuy();
   };
 
-  const animStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
   if (!isUnlocked) {
     return (
       <View style={[styles.card, styles.lockedCard]}>
-        <Text style={styles.lockedEmoji}>🔒</Text>
+        <Ionicons name="lock-closed" size={20} color={Colors.text.muted} />
         <Text style={styles.lockedName}>{business.name}</Text>
-        <Text style={styles.lockedHint}>
-          Earn {formatMoney(business.unlockAt)} to unlock
-        </Text>
+        <Text style={styles.lockedHint}>Earn {formatMoney(business.unlockAt)} to unlock</Text>
       </View>
     );
   }
 
   return (
-    <Animated.View style={animStyle}>
-      <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
-        <View
-          style={[
-            styles.card,
-            business.owned && { borderColor: color + '55', shadowColor: color },
-          ]}
-        >
+    <Animated.View style={[animStyle, styles.wrapper]}>
+      <TouchableOpacity activeOpacity={0.92} onPress={handlePress}>
+        <View style={[styles.card, business.owned && { borderColor: color + '4D', shadowColor: color }]}>
+          {/* icon band */}
           <LinearGradient
-            colors={
-              business.owned
-                ? [color + '18', 'rgba(255,255,255,0.02)']
-                : ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.01)']
-            }
-            style={StyleSheet.absoluteFill}
+            colors={[color + '33', color + '0D']}
+            style={styles.band}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-          />
-
-          <View style={styles.leftSection}>
-            <LinearGradient
-              colors={[color + '40', color + '12']}
-              style={styles.iconBg}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
+          >
+            <View style={[styles.iconSquare, { backgroundColor: color + '26', borderColor: color + '4D' }]}>
               <Text style={styles.emoji}>{business.emoji}</Text>
-            </LinearGradient>
-            {business.owned && (
-              <View style={[styles.levelBadge, { backgroundColor: color }]}>
-                <Text style={styles.levelText}>Lv.{business.level}</Text>
-              </View>
-            )}
-          </View>
+            </View>
+            <View style={styles.bandRight}>
+              {business.owned ? (
+                <>
+                  <View style={[styles.levelBadge, { backgroundColor: color }]}>
+                    <Text style={styles.levelText}>LV {business.level}</Text>
+                  </View>
+                  <View style={styles.incomePill}>
+                    <View style={styles.incomeDot} />
+                    <Text style={styles.incomeText}>{formatIncomePerSec(income)}</Text>
+                  </View>
+                </>
+              ) : (
+                <View style={styles.notOwnedPill}>
+                  <Text style={styles.notOwnedText}>NOT OWNED</Text>
+                </View>
+              )}
+            </View>
+          </LinearGradient>
 
-          <View style={styles.middleSection}>
+          {/* body */}
+          <View style={styles.body}>
             <Text style={styles.name} numberOfLines={1}>{business.name}</Text>
             <Text style={styles.description} numberOfLines={1}>{business.description}</Text>
-            {business.owned ? (
-              <View style={[styles.incomePill, { backgroundColor: Colors.accent.green + '18' }]}>
-                <View style={styles.incomeDot} />
-                <Text style={styles.incomeText}>{formatIncomePerSec(income)}</Text>
-              </View>
-            ) : (
-              <View style={styles.notOwnedPill}>
-                <Text style={styles.notOwnedText}>Not owned</Text>
-              </View>
-            )}
-          </View>
 
-          <View style={styles.rightSection}>
-            <LinearGradient
-              colors={
-                !canAfford
-                  ? ['#2a2a38', '#1d1d28']
-                  : business.owned
-                  ? [color, color + 'AA']
-                  : [Colors.accent.gold, Colors.accent.goldDark]
-              }
-              style={[styles.actionButton, !canAfford && styles.disabledButton]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
-              <Text style={[styles.actionLabel, !canAfford && styles.actionLabelDim]}>
-                {business.owned ? '↑ UPGRADE' : 'ACQUIRE'}
-              </Text>
-              <Text style={[styles.costText, !canAfford && styles.actionLabelDim]}>
-                {formatMoney(cost)}
-              </Text>
-            </LinearGradient>
+            <TouchableOpacity activeOpacity={0.9} onPress={handlePress} disabled={!canAfford}>
+              <LinearGradient
+                colors={
+                  !canAfford
+                    ? ['#1b2030', '#141925']
+                    : business.owned
+                    ? [color, color + 'CC']
+                    : ['#E4E9F2', '#C7D0DE']
+                }
+                style={styles.actionButton}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={[styles.actionLabel, !canAfford && styles.actionLabelDim]}>
+                  {business.owned ? 'UPGRADE' : 'ACQUIRE'}
+                </Text>
+                <Text style={[styles.actionCost, !canAfford && styles.actionLabelDim]}>
+                  {formatMoney(cost)}
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
         </View>
       </TouchableOpacity>
@@ -151,108 +135,86 @@ export const BusinessCard = memo(function BusinessCard({
 });
 
 const styles = StyleSheet.create({
+  wrapper: { marginHorizontal: 16, marginVertical: 7 },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: Colors.bg.card,
-    borderRadius: 18,
-    marginVertical: 6,
-    marginHorizontal: 16,
-    padding: 13,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: Hairline.soft,
     overflow: 'hidden',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 6,
   },
   lockedCard: {
-    flexDirection: 'column',
+    marginHorizontal: 16,
+    marginVertical: 7,
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.02)',
-    borderRadius: 18,
-    marginVertical: 6,
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
     borderStyle: 'dashed',
-    opacity: 0.6,
-    paddingVertical: 22,
+    borderColor: Hairline.soft,
+    paddingVertical: 24,
+    gap: 6,
   },
-  lockedEmoji: { fontSize: 28, marginBottom: 6, opacity: 0.7 },
   lockedName: { color: Colors.text.secondary, fontFamily: Fonts.displaySemi, fontSize: 14 },
-  lockedHint: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, marginTop: 4 },
-  leftSection: {
-    marginRight: 12,
+  lockedHint: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11 },
+  band: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    paddingVertical: 14,
   },
-  iconBg: {
+  iconSquare: {
     width: 56,
     height: 56,
     borderRadius: 16,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   emoji: { fontSize: 30 },
+  bandRight: { alignItems: 'flex-end', gap: 7 },
   levelBadge: {
-    marginTop: -8,
-    paddingHorizontal: 8,
-    paddingVertical: 1.5,
-    borderRadius: 9,
-    borderWidth: 1.5,
-    borderColor: 'rgba(0,0,0,0.35)',
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+    borderRadius: 8,
   },
-  levelText: { fontSize: 10, fontFamily: Fonts.bodyExtra, color: '#0E1422' },
-  middleSection: { flex: 1, gap: 4 },
-  name: {
-    color: Colors.text.primary,
-    fontFamily: Fonts.displaySemi,
-    fontSize: 15,
-  },
-  description: {
-    color: Colors.text.muted,
-    fontFamily: Fonts.body,
-    fontSize: 11,
-  },
+  levelText: { fontFamily: Fonts.bodyExtra, fontSize: 10, color: '#0E1422', letterSpacing: 0.5 },
   incomePill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
+    backgroundColor: 'rgba(61,220,151,0.12)',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 999,
   },
-  incomeDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: Colors.accent.green,
+  incomeDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: Colors.accent.green },
+  incomeText: { fontFamily: Fonts.monoSemi, fontSize: 12, color: Colors.accent.green },
+  notOwnedPill: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: Hairline.soft,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
   },
-  incomeText: { fontSize: 12.5, fontFamily: Fonts.monoSemi, color: Colors.accent.green },
-  notOwnedPill: { alignSelf: 'flex-start' },
-  notOwnedText: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11 },
-  rightSection: { marginLeft: 10 },
+  notOwnedText: { color: Colors.text.muted, fontFamily: Fonts.bodyBold, fontSize: 9.5, letterSpacing: 1 },
+  body: { paddingHorizontal: 16, paddingBottom: 14, paddingTop: 12 },
+  name: { color: Colors.text.primary, fontFamily: Fonts.display, fontSize: 17, marginBottom: 3 },
+  description: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 12, marginBottom: 12 },
   actionButton: {
-    borderRadius: 13,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
+    flexDirection: 'row',
     alignItems: 'center',
-    minWidth: 96,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    borderRadius: 14,
   },
-  disabledButton: { opacity: 0.7 },
-  actionLabel: {
-    color: '#0E1422',
-    fontFamily: Fonts.bodyExtra,
-    fontSize: 11,
-    letterSpacing: 0.8,
-  },
+  actionLabel: { color: '#0E1422', fontFamily: Fonts.bodyExtra, fontSize: 12, letterSpacing: 1 },
   actionLabelDim: { color: Colors.text.muted },
-  costText: {
-    color: 'rgba(14,20,34,0.72)',
-    fontFamily: Fonts.monoSemi,
-    fontSize: 13,
-    marginTop: 3,
-  },
+  actionCost: { color: '#0E1422', fontFamily: Fonts.monoSemi, fontSize: 14 },
 });

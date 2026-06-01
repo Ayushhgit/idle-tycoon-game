@@ -63,19 +63,19 @@ export function BusinessScreen() {
           <View style={styles.header}>
             <StatTile
               label="PASSIVE INCOME"
-              icon="📈"
+              icon="trending-up"
               value={formatIncomePerSec(passiveIncome)}
               accent={Colors.accent.green}
             />
             <StatTile
               label="OWNED"
-              icon="🏢"
+              icon="business"
               value={`${businesses.filter((b) => b.owned).length} / ${businesses.length}`}
               accent={Colors.accent.gold}
             />
           </View>
           <BoosterPanel boosters={boosters} gems={gems} onActivate={handleBooster} />
-          <SectionHeader icon="🏢" title="BUSINESSES" accent={Colors.business.startup} />
+          <SectionHeader icon="business" title="BUSINESSES" accent={Colors.business.startup} />
         </View>
       }
       renderItem={({ item }) => {

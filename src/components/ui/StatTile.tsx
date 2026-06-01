@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors';
 import { Fonts } from '../../constants/typography';
 import { Hairline } from '../../constants/theme';
 
+type IoniconName = keyof typeof Ionicons.glyphMap;
+
 interface Props {
   label: string;
   value: string;
-  icon?: string;
+  icon?: IoniconName;
   accent?: string;
   style?: ViewStyle;
 }
@@ -26,7 +29,7 @@ export function StatTile({ label, value, icon, accent = Colors.accent.platinum, 
       <View style={[styles.rail, { backgroundColor: accent }]} />
       <View style={styles.body}>
         <View style={styles.labelRow}>
-          {icon ? <Text style={styles.icon}>{icon}</Text> : null}
+          {icon ? <Ionicons name={icon} size={11} color={accent} /> : null}
           <Text style={styles.label}>{label}</Text>
         </View>
         <Text style={[styles.value, { color: accent }]} numberOfLines={1} adjustsFontSizeToFit>

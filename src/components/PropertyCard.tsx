@@ -29,30 +29,22 @@ const PROPERTY_COLORS: Record<string, [string, string]> = {
   skyscraper: ['#E6CD92', '#CDA765'],
 };
 
-export const PropertyCard = memo(function PropertyCard({
-  property,
-  money,
-  onBuy,
-  onUpgrade,
-}: Props) {
+export const PropertyCard = memo(function PropertyCard({ property, money, onBuy, onUpgrade }: Props) {
   const scale = useSharedValue(1);
-  const gradColors = PROPERTY_COLORS[property.id] ?? ['#aaa', '#888'];
+  const grad = PROPERTY_COLORS[property.id] ?? ['#AEB7C9', '#6B7689'];
   const cost = property.owned ? calcPropertyUpgradeCost(property) : property.baseCost;
   const canAfford = money >= cost;
 
   const handlePress = () => {
     if (!canAfford) return;
     scale.value = withSequence(
-      withSpring(0.95, { damping: 8, stiffness: 400 }),
-      withSpring(1, { damping: 10, stiffness: 200 })
+      withSpring(0.97, { damping: 12, stiffness: 400 }),
+      withSpring(1, { damping: 12, stiffness: 300 })
     );
-    if (property.owned) onUpgrade();
-    else onBuy();
+    property.owned ? onUpgrade() : onBuy();
   };
 
-  const animStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
   const profitPercent =
     property.owned && property.purchasePrice > 0
@@ -60,43 +52,27 @@ export const PropertyCard = memo(function PropertyCard({
       : 0;
 
   return (
-    <Animated.View style={animStyle}>
-      <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
-        <View
-          style={[
-            styles.card,
-            property.owned && { borderColor: gradColors[0] + '66', shadowColor: gradColors[0] },
-          ]}
-        >
-          <LinearGradient
-            colors={
-              property.owned
-                ? [gradColors[0] + '14', 'rgba(255,255,255,0.015)']
-                : ['rgba(255,255,255,0.04)', 'transparent']
-            }
-            style={StyleSheet.absoluteFill}
-          />
-
-          <LinearGradient
-            colors={gradColors}
-            style={styles.imageArea}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
+    <Animated.View style={[animStyle, styles.wrapper]}>
+      <TouchableOpacity activeOpacity={0.92} onPress={handlePress}>
+        <View style={[styles.card, property.owned && { borderColor: grad[0] + '4D', shadowColor: grad[0] }]}>
+          {/* image band */}
+          <LinearGradient colors={grad} style={styles.band} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <LinearGradient
-              colors={['rgba(255,255,255,0.18)', 'transparent']}
+              colors={['rgba(255,255,255,0.20)', 'transparent']}
               style={StyleSheet.absoluteFill}
             />
             <Text style={styles.emoji}>{property.emoji}</Text>
             {property.owned && (
               <View style={styles.levelPill}>
-                <Text style={styles.levelText}>Lv.{property.level}</Text>
+                <Text style={styles.levelText}>LV {property.level}</Text>
               </View>
             )}
+            <View style={styles.bandName}>
+              <Text style={styles.name} numberOfLines={1}>{property.name}</Text>
+            </View>
           </LinearGradient>
 
-          <View style={styles.info}>
-            <Text style={styles.name}>{property.name}</Text>
+          <View style={styles.body}>
             {property.owned ? (
               <View style={styles.statsRow}>
                 <View style={styles.stat}>
@@ -105,10 +81,12 @@ export const PropertyCard = memo(function PropertyCard({
                     {formatIncomePerSec(property.rentPerSec * property.level)}
                   </Text>
                 </View>
+                <View style={styles.statDivider} />
                 <View style={styles.stat}>
                   <Text style={styles.statLabel}>VALUE</Text>
                   <Text style={styles.statValue}>{formatMoney(property.currentValue)}</Text>
                 </View>
+                <View style={styles.statDivider} />
                 <View style={styles.stat}>
                   <Text style={styles.statLabel}>GAIN</Text>
                   <Text style={[styles.statValue, { color: profitPercent >= 0 ? Colors.accent.green : Colors.accent.red }]}>
@@ -120,20 +98,17 @@ export const PropertyCard = memo(function PropertyCard({
               <Text style={styles.description}>{property.description}</Text>
             )}
 
-            <TouchableOpacity
-              onPress={handlePress}
-              disabled={!canAfford}
-              style={[styles.actionBtn, !canAfford && styles.disabledBtn]}
-            >
+            <TouchableOpacity activeOpacity={0.9} onPress={handlePress} disabled={!canAfford}>
               <LinearGradient
-                colors={canAfford ? gradColors : ['#2a2a38', '#1d1d28']}
+                colors={canAfford ? grad : ['#1b2030', '#141925']}
                 style={styles.actionGrad}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-                <Text style={[styles.actionText, !canAfford && styles.actionTextDim]}>
-                  {property.owned ? '↑ UPGRADE' : 'ACQUIRE'} · {formatMoney(cost)}
+                <Text style={[styles.actionText, !canAfford && styles.actionDim]}>
+                  {property.owned ? 'UPGRADE' : 'ACQUIRE'}
                 </Text>
+                <Text style={[styles.actionCost, !canAfford && styles.actionDim]}>{formatMoney(cost)}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -144,70 +119,70 @@ export const PropertyCard = memo(function PropertyCard({
 });
 
 const styles = StyleSheet.create({
+  wrapper: { marginHorizontal: 16, marginVertical: 7 },
   card: {
     backgroundColor: Colors.bg.card,
     borderRadius: 20,
-    marginVertical: 7,
-    marginHorizontal: 16,
     overflow: 'hidden',
-    flexDirection: 'row',
     borderWidth: 1,
     borderColor: Hairline.soft,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
-    shadowRadius: 14,
-    elevation: 5,
+    shadowRadius: 16,
+    elevation: 6,
   },
-  imageArea: {
-    width: 90,
-    alignItems: 'center',
+  band: {
+    height: 96,
     justifyContent: 'center',
-    paddingVertical: 20,
+    alignItems: 'center',
+    paddingHorizontal: 16,
   },
-  emoji: { fontSize: 40 },
+  emoji: { fontSize: 46 },
   levelPill: {
     position: 'absolute',
-    bottom: 8,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    top: 10,
+    right: 12,
+    backgroundColor: 'rgba(14,20,34,0.5)',
     borderRadius: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
   },
-  levelText: { color: '#fff', fontFamily: Fonts.bodyExtra, fontSize: 10 },
-  info: {
-    flex: 1,
-    padding: 14,
+  levelText: { color: '#fff', fontFamily: Fonts.bodyExtra, fontSize: 10, letterSpacing: 0.5 },
+  bandName: {
+    position: 'absolute',
+    left: 14,
+    bottom: 10,
+    right: 14,
   },
   name: {
-    color: Colors.text.primary,
-    fontFamily: Fonts.displaySemi,
-    fontSize: 16,
-    marginBottom: 4,
+    color: '#fff',
+    fontFamily: Fonts.display,
+    fontSize: 18,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
-  description: {
-    color: Colors.text.muted,
-    fontFamily: Fonts.body,
-    fontSize: 11,
-    marginBottom: 8,
-  },
+  body: { padding: 14 },
+  description: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 12, marginBottom: 12 },
   statsRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 10,
+    alignItems: 'center',
+    marginBottom: 14,
   },
   stat: { flex: 1 },
-  statLabel: {
-    color: Colors.text.muted,
-    fontFamily: Fonts.bodyBold,
-    fontSize: 9,
-    letterSpacing: 1.2,
-    marginBottom: 3,
-  },
+  statDivider: { width: 1, height: 28, backgroundColor: Hairline.soft, marginHorizontal: 8 },
+  statLabel: { color: Colors.text.muted, fontFamily: Fonts.bodyBold, fontSize: 9, letterSpacing: 1, marginBottom: 3 },
   statValue: { color: Colors.text.primary, fontFamily: Fonts.monoSemi, fontSize: 12.5 },
-  actionBtn: { borderRadius: 12, overflow: 'hidden', marginTop: 4 },
-  disabledBtn: { opacity: 0.4 },
-  actionGrad: { paddingHorizontal: 14, paddingVertical: 11, alignItems: 'center' },
-  actionText: { color: '#0E1422', fontFamily: Fonts.bodyExtra, fontSize: 12.5, letterSpacing: 0.4 },
-  actionTextDim: { color: Colors.text.muted },
+  actionGrad: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    borderRadius: 14,
+  },
+  actionText: { color: '#0E1422', fontFamily: Fonts.bodyExtra, fontSize: 12, letterSpacing: 1 },
+  actionDim: { color: Colors.text.muted },
+  actionCost: { color: '#0E1422', fontFamily: Fonts.monoSemi, fontSize: 14 },
 });

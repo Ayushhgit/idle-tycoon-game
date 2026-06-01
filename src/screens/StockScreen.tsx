@@ -92,7 +92,7 @@ export function StockScreen() {
               </View>
             </View>
           </View>
-          <SectionHeader icon="📈" title="LIVE STOCKS" accent={Colors.accent.blue} />
+          <SectionHeader icon="trending-up" title="LIVE STOCKS" accent={Colors.accent.blue} />
         </View>
       }
       renderItem={({ item }) => (
@@ -106,7 +106,7 @@ export function StockScreen() {
       )}
       ListFooterComponent={
         <View>
-          <SectionHeader icon="📊" title="MUTUAL FUNDS" accent={Colors.accent.cyan} />
+          <SectionHeader icon="pie-chart" title="MUTUAL FUNDS" accent={Colors.accent.cyan} />
           {mutualFunds.map((fund) => (
             <View key={fund.id} style={styles.fundCard}>
               <View style={styles.fundInfo}>

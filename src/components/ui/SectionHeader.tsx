@@ -1,11 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors';
 import { Fonts } from '../../constants/typography';
 
+type IoniconName = keyof typeof Ionicons.glyphMap;
+
 interface Props {
-  icon: string;
+  icon: IoniconName;
   title: string;
   trailing?: string;
   accent?: string;
@@ -17,7 +20,7 @@ export function SectionHeader({ icon, title, trailing, accent = Colors.accent.pl
     <View style={styles.wrap}>
       <View style={styles.row}>
         <View style={[styles.chip, { backgroundColor: accent + '1F', borderColor: accent + '3A' }]}>
-          <Text style={styles.chipIcon}>{icon}</Text>
+          <Ionicons name={icon} size={15} color={accent} />
         </View>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.spacer} />
@@ -44,7 +47,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  chipIcon: { fontSize: 14 },
   title: {
     color: Colors.text.primary,
     fontFamily: Fonts.displaySemi,

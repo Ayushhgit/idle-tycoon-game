@@ -39,18 +39,18 @@ export function LuxuryScreen() {
           <View style={styles.statsRow}>
             <StatTile
               label="ITEMS OWNED"
-              icon="💎"
+              icon="diamond"
               value={`${ownedItems.length}/${luxuryItems.length}`}
               accent={Colors.accent.purple}
             />
             <StatTile
               label="PRESTIGE BONUS"
-              icon="✨"
+              icon="sparkles"
               value={`+${totalPrestige}`}
               accent={Colors.accent.gold}
             />
           </View>
-          <SectionHeader icon="💎" title="LUXURY ASSETS" accent={Colors.accent.purple} />
+          <SectionHeader icon="diamond" title="LUXURY ASSETS" accent={Colors.accent.purple} />
         </View>
       }
       renderItem={({ item }) => (
@@ -59,7 +59,7 @@ export function LuxuryScreen() {
       ListFooterComponent={
         <View>
           <SectionHeader
-            icon="🏆"
+            icon="trophy"
             title="ACHIEVEMENTS"
             trailing={`${unlockedCount}/${totalCount}`}
             accent={Colors.accent.gold}

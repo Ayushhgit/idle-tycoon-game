@@ -48,24 +48,24 @@ export function PropertyScreen() {
           <View style={styles.statsRow}>
             <StatTile
               label="RENT/SEC"
-              icon="💵"
+              icon="cash-outline"
               value={formatIncomePerSec(totalRent)}
               accent={Colors.accent.green}
             />
             <StatTile
               label="VALUE"
-              icon="🏙️"
+              icon="business"
               value={formatMoney(totalValue)}
               accent={Colors.accent.blue}
             />
             <StatTile
               label="OWNED"
-              icon="🔑"
+              icon="key"
               value={`${ownedProperties.length}/${properties.length}`}
               accent={Colors.accent.gold}
             />
           </View>
-          <SectionHeader icon="🏙️" title="REAL ESTATE" accent={Colors.property.hotel} />
+          <SectionHeader icon="home" title="REAL ESTATE" accent={Colors.property.hotel} />
         </View>
       }
       renderItem={({ item }) => (
