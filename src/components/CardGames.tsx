@@ -5,6 +5,7 @@ import { useGameStore } from '../store/gameStore';
 import { useHaptics } from '../hooks/useHaptics';
 import { formatNumber } from '../utils/formatters';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
 
 // ─── Card primitives ──────────────────────────────────────────────────────────
 
@@ -239,7 +240,7 @@ export function BlackjackGame() {
         <>
           <BetControls bet={bet} setBet={setBet} tokens={tokens} />
           <TouchableOpacity onPress={deal} style={styles.primaryBtn} activeOpacity={0.85}>
-            <LinearGradient colors={['#00E676', '#00B248']} style={styles.primaryGrad}>
+            <LinearGradient colors={['#3DDC97', '#22B97E']} style={styles.primaryGrad}>
               <Text style={styles.primaryText}>DEAL · {bet} 🎫</Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -248,10 +249,10 @@ export function BlackjackGame() {
 
       {phase === 'player' && (
         <View style={styles.actionRow}>
-          <TouchableOpacity onPress={hit} style={[styles.actionBtn, { backgroundColor: '#2979FF' }]} activeOpacity={0.85}>
+          <TouchableOpacity onPress={hit} style={[styles.actionBtn, { backgroundColor: '#5B8DEF' }]} activeOpacity={0.85}>
             <Text style={styles.actionText}>HIT</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={stand} style={[styles.actionBtn, { backgroundColor: '#FF8C00' }]} activeOpacity={0.85}>
+          <TouchableOpacity onPress={stand} style={[styles.actionBtn, { backgroundColor: '#A2803E' }]} activeOpacity={0.85}>
             <Text style={styles.actionText}>STAND</Text>
           </TouchableOpacity>
         </View>
@@ -259,7 +260,7 @@ export function BlackjackGame() {
 
       {phase === 'done' && (
         <TouchableOpacity onPress={reset} style={styles.primaryBtn} activeOpacity={0.85}>
-          <LinearGradient colors={['#FFD700', '#FF8C00']} style={styles.primaryGrad}>
+          <LinearGradient colors={['#CDA765', '#A2803E']} style={styles.primaryGrad}>
             <Text style={[styles.primaryText, { color: '#0a0a1a' }]}>PLAY AGAIN</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -402,14 +403,14 @@ export function TeenPattiGame() {
         <>
           <BetControls bet={bet} setBet={setBet} tokens={tokens} />
           <TouchableOpacity onPress={deal} style={styles.primaryBtn} activeOpacity={0.85}>
-            <LinearGradient colors={['#D500F9', '#7B1FA2']} style={styles.primaryGrad}>
+            <LinearGradient colors={['#9D8CFF', '#6F5BD6']} style={styles.primaryGrad}>
               <Text style={styles.primaryText}>DEAL · {bet} 🎫</Text>
             </LinearGradient>
           </TouchableOpacity>
         </>
       ) : (
         <TouchableOpacity onPress={reset} style={styles.primaryBtn} activeOpacity={0.85}>
-          <LinearGradient colors={['#FFD700', '#FF8C00']} style={styles.primaryGrad}>
+          <LinearGradient colors={['#CDA765', '#A2803E']} style={styles.primaryGrad}>
             <Text style={[styles.primaryText, { color: '#0a0a1a' }]}>PLAY AGAIN</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -428,12 +429,12 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.08)',
   },
   gameBg: {},
-  gameTitle: { color: Colors.text.primary, fontWeight: '900', fontSize: 18, letterSpacing: 1 },
+  gameTitle: { color: Colors.text.primary, fontFamily: Fonts.bodyExtra, fontSize: 18, letterSpacing: 1 },
   gameSub: { color: Colors.text.muted, fontSize: 11, marginBottom: 14, marginTop: 2 },
   handLabel: {
     color: Colors.text.muted,
     fontSize: 10,
-    fontWeight: '800',
+    fontFamily: Fonts.bodyExtra,
     letterSpacing: 1.5,
     marginBottom: 6,
     marginTop: 4,
@@ -450,11 +451,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.2)',
   },
-  cardCorner: { position: 'absolute', top: 3, left: 4, fontWeight: '900', fontSize: 13 },
-  cardSuit: { fontSize: 22, fontWeight: '700' },
+  cardCorner: { position: 'absolute', top: 3, left: 4, fontFamily: Fonts.bodyExtra, fontSize: 13 },
+  cardSuit: { fontSize: 22, fontFamily: Fonts.bodyBold },
   cardBack: { fontSize: 24 },
   message: {
-    fontWeight: '800',
+    fontFamily: Fonts.bodyExtra,
     fontSize: 14,
     textAlign: 'center',
     marginVertical: 10,
@@ -462,19 +463,19 @@ const styles = StyleSheet.create({
   },
   betWrap: { marginBottom: 12 },
   betInputRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
-  betLabel: { color: Colors.text.muted, fontSize: 11, fontWeight: '800', letterSpacing: 1 },
+  betLabel: { color: Colors.text.muted, fontSize: 11, fontFamily: Fonts.bodyExtra, letterSpacing: 1 },
   betInput: {
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
     color: Colors.text.primary,
-    fontWeight: '800',
+    fontFamily: Fonts.bodyExtra,
     fontSize: 16,
     width: 90,
     textAlign: 'center',
   },
-  betTokens: { color: Colors.accent.purpleLight, fontWeight: '800', fontSize: 13, marginLeft: 'auto' },
+  betTokens: { color: Colors.accent.purpleLight, fontFamily: Fonts.bodyExtra, fontSize: 13, marginLeft: 'auto' },
   betQuickRow: { flexDirection: 'row', gap: 6 },
   betQuickBtn: {
     flex: 1,
@@ -485,11 +486,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.06)',
   },
-  betQuickText: { color: Colors.text.secondary, fontWeight: '800', fontSize: 12 },
+  betQuickText: { color: Colors.text.secondary, fontFamily: Fonts.bodyExtra, fontSize: 12 },
   primaryBtn: { borderRadius: 14, overflow: 'hidden' },
   primaryGrad: { paddingVertical: 14, alignItems: 'center' },
-  primaryText: { color: '#fff', fontWeight: '900', fontSize: 15, letterSpacing: 1 },
+  primaryText: { color: '#fff', fontFamily: Fonts.bodyExtra, fontSize: 15, letterSpacing: 1 },
   actionRow: { flexDirection: 'row', gap: 10 },
   actionBtn: { flex: 1, borderRadius: 13, paddingVertical: 14, alignItems: 'center' },
-  actionText: { color: '#fff', fontWeight: '900', fontSize: 15, letterSpacing: 1 },
+  actionText: { color: '#fff', fontFamily: Fonts.bodyExtra, fontSize: 15, letterSpacing: 1 },
 });

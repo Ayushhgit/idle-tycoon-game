@@ -11,6 +11,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { formatMoney } from '../utils/formatters';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
 import { useHaptics } from '../hooks/useHaptics';
 
 interface Props {
@@ -59,18 +60,18 @@ export function OfflineEarningsModal({ visible, amount, onClaim }: Props) {
       <View style={styles.overlay}>
         <Animated.View style={[styles.card, containerStyle]}>
           <LinearGradient
-            colors={['#1a1a0a', '#0a0a1a']}
+            colors={['#161D2E', '#0A0E18']}
             style={[StyleSheet.absoluteFill, { borderRadius: 28 }]}
           />
           <Animated.View style={floatStyle}>
-            <Text style={styles.emoji}>💤</Text>
+            <Text style={styles.emoji}>🌙</Text>
           </Animated.View>
-          <Text style={styles.title}>WELCOME BACK!</Text>
+          <Text style={styles.title}>WELCOME BACK</Text>
           <Text style={styles.subtitle}>While you were away, your empire kept working</Text>
 
           <View style={styles.amountBox}>
             <LinearGradient
-              colors={['rgba(255,215,0,0.15)', 'rgba(255,140,0,0.1)']}
+              colors={['rgba(205,167,101,0.14)', 'rgba(91,141,239,0.08)']}
               style={styles.amountGrad}
             >
               <Text style={styles.amountLabel}>OFFLINE EARNINGS</Text>
@@ -81,7 +82,7 @@ export function OfflineEarningsModal({ visible, amount, onClaim }: Props) {
 
           <TouchableOpacity onPress={handleClaim} style={styles.claimBtn}>
             <LinearGradient
-              colors={[Colors.accent.gold, Colors.accent.goldDark]}
+              colors={['#F4F7FC', '#C7D0DE']}
               style={styles.claimGrad}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -109,19 +110,20 @@ const styles = StyleSheet.create({
     padding: 32,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.2)',
+    borderColor: 'rgba(228,233,242,0.16)',
     overflow: 'hidden',
   },
-  emoji: { fontSize: 64, marginBottom: 16 },
+  emoji: { fontSize: 60, marginBottom: 16 },
   title: {
     color: Colors.text.primary,
-    fontSize: 26,
-    fontWeight: '900',
+    fontFamily: Fonts.displayBlack,
+    fontSize: 24,
     letterSpacing: 2,
     marginBottom: 8,
   },
   subtitle: {
     color: Colors.text.muted,
+    fontFamily: Fonts.body,
     fontSize: 13,
     textAlign: 'center',
     marginBottom: 24,
@@ -133,24 +135,24 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.25)',
+    borderColor: 'rgba(205,167,101,0.25)',
   },
   amountGrad: { padding: 20, alignItems: 'center' },
   amountLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 11,
-    fontWeight: '700',
     letterSpacing: 2,
     marginBottom: 8,
   },
   amount: {
     color: Colors.accent.gold,
+    fontFamily: Fonts.displayBlack,
     fontSize: 36,
-    fontWeight: '900',
     letterSpacing: -1,
   },
-  efficiency: { color: Colors.text.muted, fontSize: 11, marginTop: 6 },
+  efficiency: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, marginTop: 6 },
   claimBtn: { width: '100%', borderRadius: 18, overflow: 'hidden' },
   claimGrad: { paddingVertical: 18, alignItems: 'center' },
-  claimText: { color: '#000', fontWeight: '900', fontSize: 17, letterSpacing: 0.5 },
+  claimText: { color: '#0E1422', fontFamily: Fonts.displayBlack, fontSize: 16, letterSpacing: 0.5 },
 });

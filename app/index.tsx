@@ -30,7 +30,9 @@ import { PrestigeScreen } from '../src/screens/PrestigeScreen';
 import { CasinoScreen } from '../src/screens/CasinoScreen';
 
 import { AudioService } from '../src/services/audioService';
+import { AppBackground } from '../src/components/ui/AppBackground';
 import { Colors } from '../src/constants/colors';
+import { Fonts } from '../src/constants/typography';
 import { TabName } from '../src/types/game';
 
 export default function GameScreen() {
@@ -113,11 +115,7 @@ export default function GameScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <LinearGradient
-        colors={['#0c0c22', '#080816', '#05050e']}
-        locations={[0, 0.5, 1]}
-        style={StyleSheet.absoluteFill}
-      />
+      <AppBackground />
 
       <MoneyDisplay onOpenSettings={() => setShowSettings(true)} />
 
@@ -142,12 +140,12 @@ export default function GameScreen() {
           exiting={FadeOut.duration(400)}
         >
           <LinearGradient
-            colors={[Colors.accent.gold, Colors.accent.goldDark]}
+            colors={['#F4F7FC', '#C7D0DE']}
             style={styles.toastGrad}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <Text style={styles.toastText}>🏆 UNLOCKED: {achievementToast}</Text>
+            <Text style={styles.toastText}>UNLOCKED · {achievementToast}</Text>
           </LinearGradient>
         </Animated.View>
       )}
@@ -168,7 +166,7 @@ export default function GameScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#080818',
+    backgroundColor: '#0B0F1A',
   },
   content: { flex: 1 },
   screenWrapper: { flex: 1 },
@@ -180,11 +178,11 @@ const styles = StyleSheet.create({
     right: 16,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: Colors.accent.gold,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 12,
+    shadowColor: '#C7D0DE',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.45,
+    shadowRadius: 16,
+    elevation: 14,
     zIndex: 999,
   },
   toastGrad: {
@@ -193,9 +191,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   toastText: {
-    color: '#000',
-    fontWeight: '900',
-    fontSize: 15,
-    letterSpacing: 0.5,
+    color: '#0B0F1A',
+    fontFamily: Fonts.displayBlack,
+    fontSize: 14,
+    letterSpacing: 0.8,
   },
 });

@@ -9,6 +9,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 import { formatDuration } from '../utils/formatters';
 import { GameState } from '../types/game';
 
@@ -30,7 +32,7 @@ const BOOSTERS: BoosterDef[] = [
     description: 'Double passive income for 2 minutes',
     emoji: '⚡',
     gemCost: 20,
-    colors: ['#FFD700', '#FF8C00'],
+    colors: ['#E6CD92', '#CDA765'],
   },
   {
     key: 'tapMultiplier3x',
@@ -38,7 +40,7 @@ const BOOSTERS: BoosterDef[] = [
     description: 'Triple tap earnings for 90 seconds',
     emoji: '👆',
     gemCost: 15,
-    colors: ['#2979FF', '#1565C0'],
+    colors: ['#5B8DEF', '#3D6FD6'],
   },
   {
     key: 'autoClicker',
@@ -46,7 +48,7 @@ const BOOSTERS: BoosterDef[] = [
     description: 'Auto-taps 1x/sec for 60 seconds',
     emoji: '🤖',
     gemCost: 10,
-    colors: ['#AB47BC', '#4A148C'],
+    colors: ['#9D8CFF', '#6F5BD6'],
   },
   {
     key: 'investmentBoost',
@@ -54,7 +56,7 @@ const BOOSTERS: BoosterDef[] = [
     description: '10% off stock purchases for 3 minutes',
     emoji: '📈',
     gemCost: 25,
-    colors: ['#00E676', '#00C853'],
+    colors: ['#3DDC97', '#22B97E'],
   },
 ];
 
@@ -150,14 +152,14 @@ const BoosterCard = memo(function BoosterCard({
           style={[styles.buyBtn, (isActive || !canAfford) && styles.buyBtnDisabled]}
         >
           <LinearGradient
-            colors={isActive ? ['#333', '#222'] : canAfford ? def.colors : ['#333', '#222']}
+            colors={isActive ? ['#1b2030', '#141925'] : canAfford ? def.colors : ['#1b2030', '#141925']}
             style={styles.buyGrad}
           >
             {isActive ? (
               <Text style={styles.activeText}>ACTIVE</Text>
             ) : (
               <>
-                <Text style={styles.gemEmoji}>💎</Text>
+                <Text style={styles.gemEmoji}>◈</Text>
                 <Text style={styles.gemCost}>{def.gemCost}</Text>
               </>
             )}
@@ -172,9 +174,9 @@ const styles = StyleSheet.create({
   container: { paddingVertical: 8 },
   sectionTitle: {
     color: Colors.text.secondary,
-    fontWeight: '800',
+    fontFamily: Fonts.displaySemi,
     fontSize: 13,
-    letterSpacing: 1.5,
+    letterSpacing: 1,
     marginBottom: 10,
     paddingHorizontal: 16,
   },
@@ -190,7 +192,7 @@ const styles = StyleSheet.create({
   },
   activeCard: {
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.2)',
+    borderColor: 'rgba(228,233,242,0.2)',
   },
   iconArea: {
     width: 44,
@@ -202,9 +204,9 @@ const styles = StyleSheet.create({
   },
   emoji: { fontSize: 24 },
   info: { flex: 1 },
-  name: { color: Colors.text.primary, fontWeight: '800', fontSize: 14 },
-  description: { color: Colors.text.muted, fontSize: 11, marginTop: 2 },
-  timer: { fontWeight: '700', fontSize: 12, marginTop: 3 },
+  name: { color: Colors.text.primary, fontFamily: Fonts.displaySemi, fontSize: 14 },
+  description: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, marginTop: 3 },
+  timer: { fontFamily: Fonts.monoSemi, fontSize: 12, marginTop: 4 },
   buyBtn: { borderRadius: 10, overflow: 'hidden' },
   buyBtnDisabled: { opacity: 0.5 },
   buyGrad: {
@@ -214,12 +216,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     gap: 4,
   },
-  gemEmoji: { fontSize: 14 },
-  gemCost: { color: '#fff', fontWeight: '800', fontSize: 14 },
+  gemEmoji: { fontSize: 13, color: '#0E1422' },
+  gemCost: { color: '#0E1422', fontFamily: Fonts.monoSemi, fontSize: 14 },
   activeText: {
     color: Colors.accent.green,
-    fontWeight: '800',
+    fontFamily: Fonts.bodyExtra,
     fontSize: 12,
+    letterSpacing: 0.5,
     paddingHorizontal: 4,
   },
 });

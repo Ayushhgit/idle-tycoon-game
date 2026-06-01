@@ -11,7 +11,7 @@ import Animated, {
 
 const { width, height } = Dimensions.get('window');
 
-const COLORS = ['#FFD700', '#FF1744', '#00E676', '#2979FF', '#D500F9', '#00E5FF', '#FF8C00'];
+const COLORS = ['#E4E9F2', '#CDA765', '#3DDC97', '#5B8DEF', '#9D8CFF', '#5BE1E6', '#AEB7C9'];
 
 interface Props {
   /** Increment this number to fire a burst. */

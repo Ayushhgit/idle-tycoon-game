@@ -23,6 +23,7 @@ import { CasinoResult, CasinoState } from '../types/game';
 import { LotteryPanel } from '../components/LotteryPanel';
 import { BlackjackGame, TeenPattiGame } from '../components/CardGames';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
 import { useHaptics } from '../hooks/useHaptics';
 import { formatNumber, formatMoney } from '../utils/formatters';
 
@@ -200,7 +201,7 @@ function CasinoHeader({
       <View style={styles.headerBtnRow}>
         <TouchableOpacity onPress={onBuyPress} style={styles.buyBtn} activeOpacity={0.85}>
           <LinearGradient
-            colors={['#FFD700', '#FF8C00']}
+            colors={['#CDA765', '#A2803E']}
             style={styles.buyGrad}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -215,7 +216,7 @@ function CasinoHeader({
           disabled={tokens <= 0}
         >
           <LinearGradient
-            colors={['#00E676', '#00B248']}
+            colors={['#3DDC97', '#22B97E']}
             style={styles.buyGrad}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -349,7 +350,7 @@ function ResultBanner({ result }: { result: CasinoResult }) {
   return (
     <Animated.View style={[styles.resultBanner, animStyle]}>
       <LinearGradient
-        colors={result.won ? ['rgba(0,230,118,0.15)', 'rgba(0,230,118,0.05)'] : ['rgba(255,23,68,0.15)', 'rgba(255,23,68,0.05)']}
+        colors={result.won ? ['rgba(61,220,151,0.15)', 'rgba(61,220,151,0.05)'] : ['rgba(255,23,68,0.15)', 'rgba(255,23,68,0.05)']}
         style={styles.resultGrad}
       >
         <Text style={styles.resultEmoji}>{result.won ? '🎉' : '💸'}</Text>
@@ -440,7 +441,7 @@ function SlotsGame({ tokens, onPlay }: { tokens: number; onPlay: (bet: number) =
         <Animated.View style={[styles.leverContainer, leverStyle]}>
           <TouchableOpacity onPress={spin} disabled={spinning || tokens < bet}>
             <LinearGradient
-              colors={spinning || tokens < bet ? ['#555', '#333'] : ['#FF3D00', '#B71C1C']}
+              colors={spinning || tokens < bet ? ['#555', '#333'] : ['#E03E5E', '#C13049']}
               style={styles.leverBtn}
             >
               <Text style={styles.leverText}>{spinning ? '...' : 'SPIN'}</Text>
@@ -526,7 +527,7 @@ function CoinFlipGame({
 
       <Animated.View style={[styles.coinWrapper, coinStyle]}>
         <LinearGradient
-          colors={['#FFD700', '#FF8C00', '#FFD700']}
+          colors={['#CDA765', '#A2803E', '#CDA765']}
           style={styles.coin}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -563,7 +564,7 @@ function CoinFlipGame({
         style={[styles.playBtn, (flipping || tokens < bet) && styles.playBtnDisabled]}
       >
         <LinearGradient
-          colors={flipping || tokens < bet ? ['#333', '#222'] : ['#2979FF', '#1565C0']}
+          colors={flipping || tokens < bet ? ['#333', '#222'] : ['#5B8DEF', '#3D6FD6']}
           style={styles.playBtnGrad}
         >
           <Text style={styles.playBtnText}>
@@ -678,8 +679,8 @@ function RouletteGame({
                 betType === t
                   ? t === 'red'   ? ['#c62828', '#b71c1c']
                   : t === 'black' ? ['#424242', '#212121']
-                  : t === 'even'  ? ['#1565C0', '#0D47A1']
-                  :                 ['#6A1B9A', '#4A148C']
+                  : t === 'even'  ? ['#3D6FD6', '#0D47A1']
+                  :                 ['#6A1B9A', '#5A47B0']
                   : ['#1a1a2e', '#111']
               }
               style={styles.betTypeBtnGrad}
@@ -696,7 +697,7 @@ function RouletteGame({
         style={[styles.numberBetRow, betType === 'number' && styles.numberBetRowActive]}
       >
         <LinearGradient
-          colors={betType === 'number' ? ['#FF6D00', '#E65100'] : ['#1a1a2e', '#111']}
+          colors={betType === 'number' ? ['#CDA765', '#E65100'] : ['#1a1a2e', '#111']}
           style={styles.numberBetGrad}
         >
           <Text style={styles.numberBetLabel}>EXACT NUMBER (30x)</Text>
@@ -839,7 +840,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,215,0,0.15)',
+    borderBottomColor: 'rgba(205,167,101,0.15)',
   },
   headerTop: {
     flexDirection: 'row',
@@ -850,7 +851,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: Colors.accent.gold,
     fontSize: 22,
-    fontWeight: '900',
+    fontFamily: Fonts.bodyExtra,
     letterSpacing: 2,
   },
   headerSub: {
@@ -860,42 +861,42 @@ const styles = StyleSheet.create({
   },
   tokenBadge: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,215,0,0.1)',
+    backgroundColor: 'rgba(205,167,101,0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.3)',
+    borderColor: 'rgba(205,167,101,0.3)',
     borderRadius: 14,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   tokenEmoji: { fontSize: 20 },
-  tokenCount: { color: Colors.accent.gold, fontWeight: '900', fontSize: 18 },
-  tokenLabel: { color: Colors.text.muted, fontSize: 9, fontWeight: '700', letterSpacing: 1 },
+  tokenCount: { color: Colors.accent.gold, fontFamily: Fonts.bodyExtra, fontSize: 18 },
+  tokenLabel: { color: Colors.text.muted, fontSize: 9, fontFamily: Fonts.bodyBold, letterSpacing: 1 },
   headerBtnRow: { flexDirection: 'row', gap: 10 },
   buyBtn: { flex: 1, borderRadius: 12, overflow: 'hidden' },
   buyGrad: { paddingVertical: 12, alignItems: 'center' },
-  buyText: { color: '#000', fontWeight: '900', fontSize: 14, letterSpacing: 1 },
-  cashOutText: { color: '#00210f', fontWeight: '900', fontSize: 14, letterSpacing: 0.5 },
+  buyText: { color: '#000', fontFamily: Fonts.bodyExtra, fontSize: 14, letterSpacing: 1 },
+  cashOutText: { color: '#00210f', fontFamily: Fonts.bodyExtra, fontSize: 14, letterSpacing: 0.5 },
   cashOutDisabled: { opacity: 0.4 },
   cashOutRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 4 },
   cashOutCard: {
     flex: 1,
-    backgroundColor: 'rgba(0,230,118,0.08)',
+    backgroundColor: 'rgba(61,220,151,0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(0,230,118,0.25)',
+    borderColor: 'rgba(61,220,151,0.25)',
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
     gap: 6,
   },
-  cashOutPct: { color: Colors.accent.green, fontWeight: '900', fontSize: 18 },
-  cashOutTokens: { color: Colors.text.secondary, fontSize: 12, fontWeight: '700' },
+  cashOutPct: { color: Colors.accent.green, fontFamily: Fonts.bodyExtra, fontSize: 18 },
+  cashOutTokens: { color: Colors.text.secondary, fontSize: 12, fontFamily: Fonts.bodyBold },
   cashOutValueBadge: {
-    backgroundColor: 'rgba(0,230,118,0.15)',
+    backgroundColor: 'rgba(61,220,151,0.15)',
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  cashOutValue: { color: Colors.accent.green, fontWeight: '800', fontSize: 12 },
+  cashOutValue: { color: Colors.accent.green, fontFamily: Fonts.bodyExtra, fontSize: 12 },
 
   // Buy panel
   buyPanel: {
@@ -907,34 +908,34 @@ const styles = StyleSheet.create({
   buyPanelTitle: {
     color: Colors.text.muted,
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: Fonts.bodyBold,
     letterSpacing: 2,
     marginBottom: 12,
   },
   packagesRow: { marginHorizontal: -4 },
   pkgCard: { marginHorizontal: 4, borderRadius: 14, overflow: 'hidden', width: 110 },
   pkgCardDisabled: { opacity: 0.4 },
-  pkgGrad: { padding: 12, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,215,0,0.15)', borderRadius: 14 },
+  pkgGrad: { padding: 12, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(205,167,101,0.15)', borderRadius: 14 },
   pkgEmoji: { fontSize: 28, marginBottom: 4 },
-  pkgLabel: { color: Colors.text.muted, fontSize: 10, fontWeight: '700', letterSpacing: 1 },
-  pkgTokens: { color: Colors.accent.gold, fontWeight: '900', fontSize: 14, marginTop: 4 },
+  pkgLabel: { color: Colors.text.muted, fontSize: 10, fontFamily: Fonts.bodyBold, letterSpacing: 1 },
+  pkgTokens: { color: Colors.accent.gold, fontFamily: Fonts.bodyExtra, fontSize: 14, marginTop: 4 },
   pkgBonus: {
-    backgroundColor: 'rgba(0,230,118,0.15)',
+    backgroundColor: 'rgba(61,220,151,0.15)',
     borderRadius: 6,
     paddingHorizontal: 6,
     paddingVertical: 2,
     marginTop: 4,
   },
-  pkgBonusText: { color: Colors.accent.green, fontSize: 9, fontWeight: '700' },
+  pkgBonusText: { color: Colors.accent.green, fontSize: 9, fontFamily: Fonts.bodyBold },
   pkgCostBadge: {
     marginTop: 8,
-    backgroundColor: 'rgba(255,215,0,0.2)',
+    backgroundColor: 'rgba(205,167,101,0.2)',
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
   pkgCostBadgeLocked: { backgroundColor: 'rgba(255,255,255,0.06)' },
-  pkgCost: { color: Colors.accent.gold, fontWeight: '800', fontSize: 11 },
+  pkgCost: { color: Colors.accent.gold, fontFamily: Fonts.bodyExtra, fontSize: 11 },
 
   // Stats bar
   statsBar: {
@@ -946,8 +947,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   statItem: { flex: 1, alignItems: 'center' },
-  statVal: { fontWeight: '900', fontSize: 14 },
-  statLabel: { color: Colors.text.muted, fontSize: 9, fontWeight: '700', letterSpacing: 1, marginTop: 2 },
+  statVal: { fontFamily: Fonts.bodyExtra, fontSize: 14 },
+  statLabel: { color: Colors.text.muted, fontSize: 9, fontFamily: Fonts.bodyBold, letterSpacing: 1, marginTop: 2 },
 
   // Game tabs
   gameTabs: {
@@ -966,9 +967,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.06)',
   },
-  gameTabActive: { backgroundColor: 'rgba(255,215,0,0.14)', borderColor: 'rgba(255,215,0,0.35)' },
+  gameTabActive: { backgroundColor: 'rgba(205,167,101,0.14)', borderColor: 'rgba(205,167,101,0.35)' },
   gameTabEmoji: { fontSize: 20 },
-  gameTabText: { color: Colors.text.muted, fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
+  gameTabText: { color: Colors.text.muted, fontSize: 10, fontFamily: Fonts.bodyBold, letterSpacing: 0.5 },
   gameTabTextActive: { color: Colors.accent.gold },
 
   // Result banner
@@ -982,7 +983,7 @@ const styles = StyleSheet.create({
   },
   resultEmoji: { fontSize: 32 },
   resultInfo: { flex: 1 },
-  resultTitle: { fontWeight: '900', fontSize: 18 },
+  resultTitle: { fontFamily: Fonts.bodyExtra, fontSize: 18 },
   resultDetail: { color: Colors.text.muted, fontSize: 12, marginTop: 2 },
 
   // Game card
@@ -993,12 +994,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.1)',
+    borderColor: 'rgba(205,167,101,0.1)',
   },
   gameCardBg: { ...StyleSheet.absoluteFillObject },
   gameTitle: {
     color: Colors.text.primary,
-    fontWeight: '900',
+    fontFamily: Fonts.bodyExtra,
     fontSize: 18,
     letterSpacing: 1,
     marginBottom: 4,
@@ -1012,7 +1013,7 @@ const styles = StyleSheet.create({
     padding: 16,
     width: width - 80,
     borderWidth: 2,
-    borderColor: 'rgba(255,215,0,0.2)',
+    borderColor: 'rgba(205,167,101,0.2)',
   },
   reelsRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 8 },
   reelWindow: {
@@ -1022,7 +1023,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.3)',
+    borderColor: 'rgba(205,167,101,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1041,7 +1042,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
   },
-  leverText: { color: '#fff', fontWeight: '900', fontSize: 16, letterSpacing: 2 },
+  leverText: { color: '#fff', fontFamily: Fonts.bodyExtra, fontSize: 16, letterSpacing: 2 },
   payTable: {
     marginTop: 16,
     backgroundColor: 'rgba(0,0,0,0.3)',
@@ -1051,14 +1052,14 @@ const styles = StyleSheet.create({
   payTableTitle: {
     color: Colors.text.muted,
     fontSize: 10,
-    fontWeight: '700',
+    fontFamily: Fonts.bodyBold,
     letterSpacing: 2,
     marginBottom: 8,
   },
   payRows: { gap: 4 },
   payRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   payCombo: { color: Colors.text.secondary, fontSize: 12 },
-  payPayout: { color: Colors.accent.gold, fontWeight: '800', fontSize: 13 },
+  payPayout: { color: Colors.accent.gold, fontFamily: Fonts.bodyExtra, fontSize: 13 },
 
   // Coin flip
   coinWrapper: { alignSelf: 'center', marginVertical: 16 },
@@ -1069,7 +1070,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
-    borderColor: '#FFE44D',
+    borderColor: '#E6CD92',
     shadowColor: Colors.accent.gold,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
@@ -1077,7 +1078,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   coinFace: { fontSize: 40 },
-  coinLabel: { color: '#000', fontWeight: '900', fontSize: 11, letterSpacing: 1, marginTop: 2 },
+  coinLabel: { color: '#000', fontFamily: Fonts.bodyExtra, fontSize: 11, letterSpacing: 1, marginTop: 2 },
   choiceRow: { flexDirection: 'row', gap: 12, marginBottom: 16 },
   choiceBtn: {
     flex: 1,
@@ -1091,10 +1092,10 @@ const styles = StyleSheet.create({
   },
   choiceBtnActive: {
     borderColor: Colors.accent.gold,
-    backgroundColor: 'rgba(255,215,0,0.1)',
+    backgroundColor: 'rgba(205,167,101,0.1)',
   },
   choiceEmoji: { fontSize: 28 },
-  choiceText: { color: Colors.text.muted, fontWeight: '800', fontSize: 14, letterSpacing: 1 },
+  choiceText: { color: Colors.text.muted, fontFamily: Fonts.bodyExtra, fontSize: 14, letterSpacing: 1 },
   choiceTextActive: { color: Colors.accent.gold },
 
   // Roulette
@@ -1111,9 +1112,9 @@ const styles = StyleSheet.create({
   },
   wheelEmoji: { fontSize: 52 },
   landedDisplay: { flex: 1, alignItems: 'center' },
-  landedLabel: { color: Colors.text.muted, fontSize: 11, fontWeight: '700', letterSpacing: 2 },
-  landedNumber: { fontWeight: '900', fontSize: 52, lineHeight: 56 },
-  landedColor: { fontWeight: '700', fontSize: 13 },
+  landedLabel: { color: Colors.text.muted, fontSize: 11, fontFamily: Fonts.bodyBold, letterSpacing: 2 },
+  landedNumber: { fontFamily: Fonts.bodyExtra, fontSize: 52, lineHeight: 56 },
+  landedColor: { fontFamily: Fonts.bodyBold, fontSize: 13 },
   betTypeGrid: { flexDirection: 'row', gap: 8, marginBottom: 10, flexWrap: 'wrap' },
   betTypeBtn: {
     flex: 1,
@@ -1125,7 +1126,7 @@ const styles = StyleSheet.create({
   },
   betTypeBtnActive: { borderWidth: 2 },
   betTypeBtnGrad: { paddingVertical: 12, alignItems: 'center', gap: 2 },
-  betTypeBtnText: { color: '#fff', fontWeight: '900', fontSize: 13, letterSpacing: 1 },
+  betTypeBtnText: { color: '#fff', fontFamily: Fonts.bodyExtra, fontSize: 13, letterSpacing: 1 },
   betTypePayout: { color: 'rgba(255,255,255,0.6)', fontSize: 10 },
   numberBetRow: {
     borderRadius: 12,
@@ -1134,7 +1135,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',
   },
-  numberBetRowActive: { borderColor: '#FF6D00' },
+  numberBetRowActive: { borderColor: '#CDA765' },
   numberBetGrad: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1142,14 +1143,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     justifyContent: 'space-between',
   },
-  numberBetLabel: { color: Colors.text.primary, fontWeight: '700', fontSize: 13 },
+  numberBetLabel: { color: Colors.text.primary, fontFamily: Fonts.bodyBold, fontSize: 13 },
   numberInput: {
     backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,
     color: Colors.text.primary,
-    fontWeight: '900',
+    fontFamily: Fonts.bodyExtra,
     fontSize: 18,
     textAlign: 'center',
     width: 60,
@@ -1159,14 +1160,14 @@ const styles = StyleSheet.create({
   playBtn: { borderRadius: 14, overflow: 'hidden', marginTop: 8 },
   playBtnDisabled: { opacity: 0.5 },
   playBtnGrad: { paddingVertical: 16, alignItems: 'center' },
-  playBtnText: { color: '#fff', fontWeight: '900', fontSize: 16, letterSpacing: 1 },
+  playBtnText: { color: '#fff', fontFamily: Fonts.bodyExtra, fontSize: 16, letterSpacing: 1 },
 
   // Bet controls
   betControls: { marginTop: 4 },
   betLabel: {
     color: Colors.text.muted,
     fontSize: 10,
-    fontWeight: '700',
+    fontFamily: Fonts.bodyBold,
     letterSpacing: 2,
     marginBottom: 8,
   },
@@ -1178,7 +1179,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   betAllIn: { backgroundColor: 'rgba(255,23,68,0.15)', borderColor: Colors.accent.red, borderWidth: 1 },
-  betAdjText: { color: Colors.text.primary, fontWeight: '800', fontSize: 12 },
+  betAdjText: { color: Colors.text.primary, fontFamily: Fonts.bodyExtra, fontSize: 12 },
   betInput: {
     flex: 1,
     backgroundColor: 'rgba(255,255,255,0.08)',
@@ -1186,7 +1187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     color: Colors.accent.gold,
-    fontWeight: '900',
+    fontFamily: Fonts.bodyExtra,
     fontSize: 17,
     textAlign: 'center',
   },
@@ -1198,8 +1199,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.06)',
     alignItems: 'center',
   },
-  quickBetActive: { backgroundColor: 'rgba(255,215,0,0.15)' },
-  quickBetText: { color: Colors.text.muted, fontWeight: '700', fontSize: 12 },
+  quickBetActive: { backgroundColor: 'rgba(205,167,101,0.15)' },
+  quickBetText: { color: Colors.text.muted, fontFamily: Fonts.bodyBold, fontSize: 12 },
   quickBetTextActive: { color: Colors.accent.gold },
 
   // History
@@ -1212,7 +1213,7 @@ const styles = StyleSheet.create({
   historyTitle: {
     color: Colors.text.muted,
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: Fonts.bodyBold,
     letterSpacing: 2,
     marginBottom: 10,
   },
@@ -1227,5 +1228,5 @@ const styles = StyleSheet.create({
   historyGameEmoji: { fontSize: 20, width: 28, textAlign: 'center' },
   historyInfo: { flex: 1 },
   historyDetail: { color: Colors.text.muted, fontSize: 11 },
-  historyNet: { fontWeight: '800', fontSize: 14 },
+  historyNet: { fontFamily: Fonts.bodyExtra, fontSize: 14 },
 });

@@ -12,6 +12,8 @@ import { Business } from '../types/game';
 import { formatMoney, formatIncomePerSec } from '../utils/formatters';
 import { calcBusinessCost, calcBusinessIncome } from '../utils/calculations';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 
 interface Props {
   business: Business;
@@ -135,7 +137,7 @@ export const BusinessCard = memo(function BusinessCard({
               end={{ x: 1, y: 1 }}
             >
               <Text style={[styles.actionLabel, !canAfford && styles.actionLabelDim]}>
-                {business.owned ? '⬆ UPGRADE' : '🛒 BUY'}
+                {business.owned ? '↑ UPGRADE' : 'ACQUIRE'}
               </Text>
               <Text style={[styles.costText, !canAfford && styles.actionLabelDim]}>
                 {formatMoney(cost)}
@@ -158,7 +160,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     padding: 13,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
+    borderColor: Hairline.soft,
     overflow: 'hidden',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
@@ -178,9 +180,9 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     paddingVertical: 22,
   },
-  lockedEmoji: { fontSize: 30, marginBottom: 6 },
-  lockedName: { color: Colors.text.secondary, fontWeight: '800', fontSize: 14 },
-  lockedHint: { color: Colors.text.muted, fontSize: 11, marginTop: 4 },
+  lockedEmoji: { fontSize: 28, marginBottom: 6, opacity: 0.7 },
+  lockedName: { color: Colors.text.secondary, fontFamily: Fonts.displaySemi, fontSize: 14 },
+  lockedHint: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, marginTop: 4 },
   leftSection: {
     marginRight: 12,
     alignItems: 'center',
@@ -201,15 +203,16 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: 'rgba(0,0,0,0.35)',
   },
-  levelText: { fontSize: 10, fontWeight: '900', color: '#0a0a1a' },
+  levelText: { fontSize: 10, fontFamily: Fonts.bodyExtra, color: '#0E1422' },
   middleSection: { flex: 1, gap: 4 },
   name: {
     color: Colors.text.primary,
-    fontWeight: '800',
-    fontSize: 15.5,
+    fontFamily: Fonts.displaySemi,
+    fontSize: 15,
   },
   description: {
     color: Colors.text.muted,
+    fontFamily: Fonts.body,
     fontSize: 11,
   },
   incomePill: {
@@ -227,9 +230,9 @@ const styles = StyleSheet.create({
     borderRadius: 2.5,
     backgroundColor: Colors.accent.green,
   },
-  incomeText: { fontSize: 12.5, fontWeight: '800', color: Colors.accent.green },
+  incomeText: { fontSize: 12.5, fontFamily: Fonts.monoSemi, color: Colors.accent.green },
   notOwnedPill: { alignSelf: 'flex-start' },
-  notOwnedText: { color: Colors.text.muted, fontSize: 11, fontStyle: 'italic' },
+  notOwnedText: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11 },
   rightSection: { marginLeft: 10 },
   actionButton: {
     borderRadius: 13,
@@ -240,16 +243,16 @@ const styles = StyleSheet.create({
   },
   disabledButton: { opacity: 0.7 },
   actionLabel: {
-    color: '#0a0a1a',
-    fontWeight: '900',
+    color: '#0E1422',
+    fontFamily: Fonts.bodyExtra,
     fontSize: 11,
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
   actionLabelDim: { color: Colors.text.muted },
   costText: {
-    color: 'rgba(0,0,0,0.7)',
-    fontWeight: '800',
+    color: 'rgba(14,20,34,0.72)',
+    fontFamily: Fonts.monoSemi,
     fontSize: 13,
-    marginTop: 2,
+    marginTop: 3,
   },
 });

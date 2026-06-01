@@ -17,6 +17,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { formatMoney, formatPercent } from '../utils/formatters';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 
 interface Props {
   visible: boolean;
@@ -47,35 +49,35 @@ export function NetWorthModal({ visible, onClose }: Props) {
       emoji: '💵',
       value: money,
       color: Colors.accent.gold,
-      gradient: ['rgba(255,215,0,0.15)', 'rgba(255,215,0,0.05)'] as [string, string],
+      gradient: ['rgba(205,167,101,0.15)', 'rgba(205,167,101,0.04)'] as [string, string],
     },
     {
       label: 'Stock Portfolio',
       emoji: '📈',
       value: stockValue,
       color: Colors.accent.blue,
-      gradient: ['rgba(41,121,255,0.15)', 'rgba(41,121,255,0.05)'] as [string, string],
+      gradient: ['rgba(91,141,239,0.15)', 'rgba(91,141,239,0.04)'] as [string, string],
     },
     {
       label: 'Real Estate',
       emoji: '🏙️',
       value: propValue,
       color: Colors.accent.green,
-      gradient: ['rgba(0,230,118,0.15)', 'rgba(0,230,118,0.05)'] as [string, string],
+      gradient: ['rgba(61,220,151,0.15)', 'rgba(61,220,151,0.04)'] as [string, string],
     },
     {
       label: 'Luxury Assets',
       emoji: '💎',
       value: luxValue,
       color: Colors.accent.purple,
-      gradient: ['rgba(213,0,249,0.15)', 'rgba(213,0,249,0.05)'] as [string, string],
+      gradient: ['rgba(157,140,255,0.15)', 'rgba(157,140,255,0.04)'] as [string, string],
     },
     {
       label: 'Mutual Funds',
       emoji: '📊',
       value: fundValue,
       color: Colors.accent.cyan,
-      gradient: ['rgba(0,229,255,0.15)', 'rgba(0,229,255,0.05)'] as [string, string],
+      gradient: ['rgba(91,225,230,0.15)', 'rgba(91,225,230,0.04)'] as [string, string],
     },
   ].filter((b) => b.value > 0);
 
@@ -108,18 +110,18 @@ export function NetWorthModal({ visible, onClose }: Props) {
           onStartShouldSetResponder={() => true}
         >
           <LinearGradient
-            colors={['#14142a', '#0a0a1a']}
+            colors={['#161D2E', '#0A0E18']}
             style={[StyleSheet.absoluteFill, { borderRadius: 28 }]}
           />
 
           <View style={styles.handle} />
 
           <LinearGradient
-            colors={['rgba(255,215,0,0.1)', 'transparent']}
+            colors={['rgba(91,141,239,0.12)', 'transparent']}
             style={styles.topGlow}
           />
 
-          <Text style={styles.title}>💰 NET WORTH</Text>
+          <Text style={styles.title}>NET WORTH</Text>
           <Text style={styles.totalValue}>{formatMoney(netWorth)}</Text>
 
           <View style={styles.quickStats}>
@@ -239,7 +241,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderBottomWidth: 0,
-    borderColor: 'rgba(255,215,0,0.15)',
+    borderColor: Hairline.soft,
     paddingTop: 12,
     paddingHorizontal: 20,
     paddingBottom: 0,
@@ -261,16 +263,16 @@ const styles = StyleSheet.create({
   },
   title: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 2,
+    letterSpacing: 3,
     textAlign: 'center',
-    marginBottom: 4,
+    marginBottom: 5,
   },
   totalValue: {
-    color: Colors.accent.gold,
+    color: Colors.accent.platinum,
+    fontFamily: Fonts.displayBlack,
     fontSize: 40,
-    fontWeight: '900',
     textAlign: 'center',
     letterSpacing: -1,
     marginBottom: 16,
@@ -285,30 +287,30 @@ const styles = StyleSheet.create({
   quickStat: { flex: 1, alignItems: 'center' },
   quickStatLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 9,
-    fontWeight: '700',
     letterSpacing: 1,
-    marginBottom: 4,
+    marginBottom: 5,
     textAlign: 'center',
   },
-  quickStatValue: { fontWeight: '900', fontSize: 13, textAlign: 'center' },
+  quickStatValue: { fontFamily: Fonts.monoSemi, fontSize: 13, textAlign: 'center' },
   quickStatDivider: {
     width: 1,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: Hairline.soft,
     marginHorizontal: 4,
   },
   list: { flex: 1 },
   sectionTitle: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 10,
-    fontWeight: '700',
     letterSpacing: 2,
     marginBottom: 8,
     marginTop: 4,
   },
   emptyState: { alignItems: 'center', paddingVertical: 32 },
   emptyEmoji: { fontSize: 40, marginBottom: 12 },
-  emptyText: { color: Colors.text.muted, fontSize: 13, textAlign: 'center' },
+  emptyText: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 13, textAlign: 'center' },
   breakdownRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -318,7 +320,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     gap: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: Hairline.faint,
   },
   breakdownIcon: {
     width: 44,
@@ -329,7 +331,7 @@ const styles = StyleSheet.create({
   },
   breakdownEmoji: { fontSize: 24 },
   breakdownInfo: { flex: 1 },
-  breakdownLabel: { color: Colors.text.primary, fontWeight: '700', fontSize: 13, marginBottom: 6 },
+  breakdownLabel: { color: Colors.text.primary, fontFamily: Fonts.bodySemi, fontSize: 13, marginBottom: 6 },
   barBg: {
     height: 4,
     backgroundColor: 'rgba(255,255,255,0.08)',
@@ -338,8 +340,8 @@ const styles = StyleSheet.create({
   },
   barFill: { height: '100%', borderRadius: 2 },
   breakdownRight: { alignItems: 'flex-end' },
-  breakdownValue: { fontWeight: '800', fontSize: 14 },
-  breakdownPct: { color: Colors.text.muted, fontSize: 11, marginTop: 2 },
+  breakdownValue: { fontFamily: Fonts.monoSemi, fontSize: 14 },
+  breakdownPct: { color: Colors.text.muted, fontFamily: Fonts.mono, fontSize: 11, marginTop: 3 },
   holdingRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -351,18 +353,18 @@ const styles = StyleSheet.create({
   },
   holdingDot: { width: 10, height: 10, borderRadius: 5 },
   holdingInfo: { flex: 1 },
-  holdingTicker: { color: Colors.text.primary, fontWeight: '800', fontSize: 14 },
-  holdingShares: { color: Colors.text.muted, fontSize: 11 },
+  holdingTicker: { color: Colors.text.primary, fontFamily: Fonts.monoSemi, fontSize: 14 },
+  holdingShares: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11 },
   holdingRight: { alignItems: 'flex-end' },
-  holdingValue: { color: Colors.text.primary, fontWeight: '800', fontSize: 14 },
-  holdingPL: { fontSize: 11, fontWeight: '700', marginTop: 2 },
+  holdingValue: { color: Colors.text.primary, fontFamily: Fonts.monoSemi, fontSize: 14 },
+  holdingPL: { fontSize: 11, fontFamily: Fonts.mono, marginTop: 3 },
   closeBtn: {
     marginTop: 12,
     marginBottom: 20,
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  closeBtnText: { color: Colors.text.secondary, fontWeight: '800', fontSize: 15 },
+  closeBtnText: { color: Colors.text.secondary, fontFamily: Fonts.bodyBold, fontSize: 14, letterSpacing: 1 },
 });

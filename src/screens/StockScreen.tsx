@@ -6,6 +6,8 @@ import { StockCard } from '../components/StockCard';
 import { SectionHeader } from '../components/ui/SectionHeader';
 import { formatMoney, formatPercent } from '../utils/formatters';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 import { useHaptics } from '../hooks/useHaptics';
 import { calcStockProfitLoss } from '../utils/calculations';
 
@@ -73,7 +75,7 @@ export function StockScreen() {
           <View style={styles.header}>
             <View style={styles.portfolioCard}>
               <LinearGradient
-                colors={['rgba(41,121,255,0.12)', 'rgba(41,121,255,0.05)']}
+                colors={['rgba(91,141,239,0.12)', 'rgba(91,141,239,0.05)']}
                 style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
               />
               <Text style={styles.portLabel}>PORTFOLIO VALUE</Text>
@@ -163,23 +165,23 @@ const styles = StyleSheet.create({
     padding: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(41,121,255,0.2)',
+    borderColor: 'rgba(91,141,239,0.2)',
   },
   portLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 10,
-    fontWeight: '700',
     letterSpacing: 2,
-    marginBottom: 4,
+    marginBottom: 5,
   },
-  portValue: { color: Colors.text.primary, fontWeight: '900', fontSize: 28 },
-  plRow: { marginTop: 4 },
-  plText: { fontWeight: '700', fontSize: 14 },
+  portValue: { color: Colors.accent.platinum, fontFamily: Fonts.displayBlack, fontSize: 28, letterSpacing: -0.5 },
+  plRow: { marginTop: 5 },
+  plText: { fontFamily: Fonts.monoSemi, fontSize: 14 },
   sectionTitle: {
     color: Colors.text.secondary,
-    fontWeight: '800',
+    fontFamily: Fonts.displaySemi,
     fontSize: 13,
-    letterSpacing: 1.5,
+    letterSpacing: 1,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
@@ -192,20 +194,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Hairline.soft,
   },
   fundInfo: { flex: 1 },
-  fundName: { color: Colors.text.primary, fontWeight: '800', fontSize: 15 },
-  fundDesc: { color: Colors.text.muted, fontSize: 11, marginTop: 2, marginBottom: 8 },
+  fundName: { color: Colors.text.primary, fontFamily: Fonts.displaySemi, fontSize: 15 },
+  fundDesc: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, marginTop: 3, marginBottom: 8 },
   fundStats: { flexDirection: 'row', gap: 12 },
   fundStat: {},
   fundStatLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 9,
-    fontWeight: '700',
     letterSpacing: 1,
-    marginBottom: 2,
+    marginBottom: 3,
   },
-  fundStatValue: { color: Colors.text.primary, fontWeight: '800', fontSize: 13 },
+  fundStatValue: { color: Colors.text.primary, fontFamily: Fonts.monoSemi, fontSize: 13 },
   fundActions: { gap: 8, marginLeft: 12 },
   fundBtn: {
     paddingHorizontal: 12,
@@ -216,5 +220,5 @@ const styles = StyleSheet.create({
   },
   fundBtnBuy: { backgroundColor: Colors.accent.green },
   fundBtnSell: { backgroundColor: Colors.accent.red },
-  fundBtnText: { color: '#000', fontWeight: '900', fontSize: 12 },
+  fundBtnText: { color: '#0E1422', fontFamily: Fonts.bodyExtra, fontSize: 12 },
 });

@@ -29,7 +29,7 @@ export const StockChart = memo(function StockChart({
 
   const pointsStr = points.join(' ');
   const isPositive = data[data.length - 1] >= data[0];
-  const lineColor = isPositive ? '#00E676' : '#FF1744';
+  const lineColor = isPositive ? '#3DDC97' : '#FF5C7A';
 
   const firstPoint = points[0].split(',');
   const lastPoint = points[points.length - 1].split(',');

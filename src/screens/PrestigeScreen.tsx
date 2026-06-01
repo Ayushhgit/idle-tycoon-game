@@ -12,6 +12,8 @@ import { useGameStore } from '../store/gameStore';
 import { formatMoney } from '../utils/formatters';
 import { calcPrestigeTokens, calcPrestigeRequirement } from '../utils/calculations';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 import { GameConfig } from '../constants/gameConfig';
 import { useHaptics } from '../hooks/useHaptics';
 import { Confetti } from '../components/Confetti';
@@ -98,7 +100,7 @@ export function PrestigeScreen() {
     <View style={{ flex: 1 }}>
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient
-        colors={['rgba(255,109,0,0.18)', 'transparent']}
+        colors={['rgba(123,166,245,0.16)', 'transparent']}
         style={styles.headerBgGlow}
       />
       <View style={styles.header}>
@@ -116,8 +118,8 @@ export function PrestigeScreen() {
           ))}
         </Animated.View>
         <View style={styles.emojiDisc}>
-          <LinearGradient colors={['#FF8A3D', '#FF3D00']} style={StyleSheet.absoluteFill} />
-          <Text style={styles.prestigeEmoji}>✨</Text>
+          <LinearGradient colors={['#7BA6F5', '#9D8CFF']} style={StyleSheet.absoluteFill} />
+          <Text style={styles.prestigeEmoji}>✦</Text>
         </View>
         <Text style={styles.prestigeCount}>PRESTIGE {prestigeData.count}</Text>
         <View style={styles.tokenChip}>
@@ -154,7 +156,7 @@ export function PrestigeScreen() {
         <Text style={styles.sectionTitle}>PRESTIGE REQUIREMENTS</Text>
         <View style={styles.requireCard}>
           <LinearGradient
-            colors={['rgba(255,109,0,0.1)', 'rgba(255,61,0,0.05)']}
+            colors={['rgba(91,141,239,0.1)', 'rgba(157,140,255,0.05)']}
             style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
           />
           <Text style={styles.reqLabel}>Net Worth Required (×8 each prestige)</Text>
@@ -179,15 +181,15 @@ export function PrestigeScreen() {
         style={[styles.prestigeBtn, !canPrestige && styles.prestigeBtnDisabled]}
       >
         <LinearGradient
-          colors={canPrestige ? ['#FF6D00', '#FF3D00'] : ['#333', '#222']}
+          colors={canPrestige ? ['#7BA6F5', '#9D8CFF'] : ['#1b2030', '#141925']}
           style={styles.prestigeGrad}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
           <Text style={styles.prestigeBtnText}>
             {canPrestige
-              ? `✨ PRESTIGE (+${tokens} tokens)`
-              : `🔒 Need ${formatMoney(requirement)}`}
+              ? `✦ PRESTIGE  ·  +${tokens} TOKENS`
+              : `🔒 NEED ${formatMoney(requirement)}`}
           </Text>
         </LinearGradient>
       </TouchableOpacity>
@@ -199,7 +201,7 @@ export function PrestigeScreen() {
           </Text>
           <View style={styles.progressBg}>
             <LinearGradient
-              colors={['#FF6D00', '#FF3D00']}
+              colors={['#7BA6F5', '#9D8CFF']}
               style={[
                 styles.progressFill,
                 {
@@ -240,16 +242,16 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: '#FF6D00',
-    opacity: 0.18,
+    backgroundColor: '#5B8DEF',
+    opacity: 0.16,
   },
   glowOrbInner: {
     position: 'absolute',
     width: 130,
     height: 130,
     borderRadius: 65,
-    backgroundColor: '#FF3D00',
-    opacity: 0.35,
+    backgroundColor: '#9D8CFF',
+    opacity: 0.3,
   },
   spinRing: {
     position: 'absolute',
@@ -260,10 +262,10 @@ const styles = StyleSheet.create({
   },
   orbDot: {
     position: 'absolute',
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: '#FFAB40',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#AEB7C9',
   },
   emojiDisc: {
     width: 96,
@@ -275,17 +277,17 @@ const styles = StyleSheet.create({
     zIndex: 10,
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.25)',
-    shadowColor: '#FF6D00',
+    shadowColor: '#7BA6F5',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 24,
+    shadowOpacity: 0.7,
+    shadowRadius: 28,
     elevation: 16,
   },
-  prestigeEmoji: { fontSize: 50 },
+  prestigeEmoji: { fontSize: 46, color: '#0E1422' },
   prestigeCount: {
     color: Colors.text.primary,
-    fontSize: 24,
-    fontWeight: '900',
+    fontFamily: Fonts.displayBlack,
+    fontSize: 23,
     letterSpacing: 2,
     zIndex: 10,
     marginTop: 14,
@@ -293,19 +295,19 @@ const styles = StyleSheet.create({
   tokenChip: {
     zIndex: 10,
     marginTop: 8,
-    backgroundColor: 'rgba(213,0,249,0.15)',
+    backgroundColor: 'rgba(157,140,255,0.14)',
     borderWidth: 1,
-    borderColor: 'rgba(213,0,249,0.4)',
+    borderColor: 'rgba(157,140,255,0.38)',
     borderRadius: 20,
     paddingHorizontal: 14,
-    paddingVertical: 5,
+    paddingVertical: 6,
   },
-  tokenChipText: { color: Colors.accent.purpleLight, fontSize: 14, fontWeight: '800' },
+  tokenChipText: { color: Colors.accent.purpleLight, fontSize: 13, fontFamily: Fonts.monoSemi },
   section: { paddingHorizontal: 16, marginBottom: 20 },
   sectionTitle: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 11,
-    fontWeight: '800',
     letterSpacing: 2,
     marginBottom: 12,
   },
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: Hairline.soft,
   },
   perkIconChip: {
     width: 40,
@@ -329,41 +331,41 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   perkEmoji: { fontSize: 20 },
-  perkLabel: { flex: 1, color: Colors.text.secondary, fontWeight: '700', fontSize: 14 },
+  perkLabel: { flex: 1, color: Colors.text.secondary, fontFamily: Fonts.bodySemi, fontSize: 14 },
   perkValues: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   perkPill: {
     borderRadius: 9,
     paddingHorizontal: 9,
     paddingVertical: 4,
   },
-  perkCurrent: { fontWeight: '800', fontSize: 14 },
+  perkCurrent: { fontFamily: Fonts.monoSemi, fontSize: 13 },
   arrow: { color: Colors.text.muted, fontSize: 13 },
-  perkAfter: { fontWeight: '900', fontSize: 14 },
+  perkAfter: { fontFamily: Fonts.monoSemi, fontSize: 13 },
   requireCard: {
     backgroundColor: Colors.bg.card,
     borderRadius: 16,
     padding: 20,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,109,0,0.2)',
+    borderColor: 'rgba(157,140,255,0.22)',
   },
-  reqLabel: { color: Colors.text.muted, fontSize: 11, letterSpacing: 1, marginBottom: 4 },
-  reqValue: { color: Colors.text.primary, fontWeight: '800', fontSize: 22, marginBottom: 12 },
-  yourLabel: { color: Colors.text.muted, fontSize: 11, letterSpacing: 1, marginBottom: 4 },
-  yourValue: { fontWeight: '900', fontSize: 24, marginBottom: 12 },
+  reqLabel: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, letterSpacing: 1, marginBottom: 5 },
+  reqValue: { color: Colors.text.primary, fontFamily: Fonts.monoSemi, fontSize: 22, marginBottom: 12 },
+  yourLabel: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, letterSpacing: 1, marginBottom: 5 },
+  yourValue: { fontFamily: Fonts.monoSemi, fontSize: 24, marginBottom: 12 },
   rewardPreview: {
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.06)',
+    borderTopColor: Hairline.soft,
     paddingTop: 12,
   },
   rewardLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 10,
-    fontWeight: '700',
     letterSpacing: 2,
     marginBottom: 8,
   },
-  rewardValue: { color: Colors.accent.gold, fontWeight: '800', fontSize: 16, marginBottom: 4 },
+  rewardValue: { color: Colors.accent.gold, fontFamily: Fonts.bodySemi, fontSize: 15, marginBottom: 4 },
   prestigeBtn: {
     marginHorizontal: 16,
     borderRadius: 20,
@@ -372,9 +374,9 @@ const styles = StyleSheet.create({
   },
   prestigeBtnDisabled: { opacity: 0.5 },
   prestigeGrad: { paddingVertical: 20, alignItems: 'center' },
-  prestigeBtnText: { color: '#fff', fontWeight: '900', fontSize: 17, letterSpacing: 0.5 },
+  prestigeBtnText: { color: '#0E1422', fontFamily: Fonts.displayBlack, fontSize: 16, letterSpacing: 0.8 },
   progressSection: { paddingHorizontal: 16, marginBottom: 20 },
-  progressLabel: { color: Colors.text.muted, fontSize: 12, marginBottom: 8 },
+  progressLabel: { color: Colors.text.muted, fontFamily: Fonts.bodySemi, fontSize: 12, marginBottom: 8 },
   progressBg: {
     height: 8,
     backgroundColor: 'rgba(255,255,255,0.08)',

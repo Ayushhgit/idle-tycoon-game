@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { formatMoney, formatNumber } from '../utils/formatters';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 
 interface Props {
   visible: boolean;
@@ -69,7 +71,7 @@ export function StatsModal({ visible, onClose, rankLabel, rankEmoji, rankColor }
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
-          <LinearGradient colors={['#14142a', '#0a0a1a']} style={[StyleSheet.absoluteFill, { borderRadius: 28 }]} />
+          <LinearGradient colors={['#161D2E', '#0A0E18']} style={[StyleSheet.absoluteFill, { borderRadius: 28 }]} />
           <View style={styles.handle} />
 
           <View style={styles.rankHeader}>
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderBottomWidth: 0,
-    borderColor: 'rgba(255,215,0,0.15)',
+    borderColor: Hairline.soft,
     paddingTop: 12,
     paddingHorizontal: 18,
   },
@@ -138,15 +140,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rankEmoji: { fontSize: 30 },
-  rankLabelSmall: { color: Colors.text.muted, fontSize: 10, fontWeight: '800', letterSpacing: 2 },
-  rankLabel: { fontSize: 22, fontWeight: '900', marginTop: 2 },
+  rankEmoji: { fontSize: 28 },
+  rankLabelSmall: { color: Colors.text.muted, fontFamily: Fonts.bodyBold, fontSize: 10, letterSpacing: 2 },
+  rankLabel: { fontFamily: Fonts.displayBlack, fontSize: 22, marginTop: 3 },
   list: { flexGrow: 0 },
   group: { marginBottom: 16 },
   groupTitle: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 10,
-    fontWeight: '800',
     letterSpacing: 2,
     marginBottom: 8,
   },
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.04)',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: Hairline.soft,
     paddingHorizontal: 14,
   },
   row: {
@@ -163,17 +165,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(255,255,255,0.06)',
+    borderBottomColor: Hairline.faint,
   },
-  rowLabel: { color: Colors.text.secondary, fontSize: 13.5, fontWeight: '600' },
-  rowValue: { color: Colors.text.primary, fontSize: 14, fontWeight: '800' },
+  rowLabel: { color: Colors.text.secondary, fontFamily: Fonts.bodySemi, fontSize: 13.5 },
+  rowValue: { color: Colors.text.primary, fontFamily: Fonts.monoSemi, fontSize: 13.5 },
   closeBtn: {
     marginBottom: 22,
     marginTop: 6,
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  closeText: { color: Colors.text.secondary, fontWeight: '800', fontSize: 15 },
+  closeText: { color: Colors.text.secondary, fontFamily: Fonts.bodyBold, fontSize: 14, letterSpacing: 1 },
 });

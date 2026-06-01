@@ -8,6 +8,8 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Achievement } from '../types/game';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 import { formatNumber } from '../utils/formatters';
 
 interface Props {
@@ -33,7 +35,7 @@ export const AchievementCard = memo(function AchievementCard({ achievement, isNe
       <View style={[styles.card, achievement.unlocked && styles.unlockedCard]}>
         {achievement.unlocked && (
           <LinearGradient
-            colors={['rgba(255,215,0,0.08)', 'rgba(255,215,0,0.02)']}
+            colors={['rgba(205,167,101,0.09)', 'rgba(205,167,101,0.02)']}
             style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
           />
         )}
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
   unlockedCard: {
     opacity: 1,
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.2)',
+    borderColor: 'rgba(205,167,101,0.24)',
   },
   iconBg: {
     width: 48,
@@ -114,14 +116,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 12,
   },
-  iconBgUnlocked: { backgroundColor: 'rgba(255,215,0,0.12)' },
+  iconBgUnlocked: { backgroundColor: 'rgba(205,167,101,0.14)' },
   emoji: { fontSize: 26 },
   info: { flex: 1 },
   nameRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
-  name: { color: Colors.text.primary, fontWeight: '800', fontSize: 14, flex: 1 },
+  name: { color: Colors.text.primary, fontFamily: Fonts.displaySemi, fontSize: 14, flex: 1 },
   nameLocked: { color: Colors.text.muted },
-  checkmark: { color: Colors.accent.gold, fontWeight: '900', fontSize: 16 },
-  description: { color: Colors.text.muted, fontSize: 11, marginBottom: 6 },
+  checkmark: { color: Colors.accent.gold, fontFamily: Fonts.bodyExtra, fontSize: 15 },
+  description: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, marginBottom: 6 },
   progressContainer: { marginBottom: 6 },
   progressBg: {
     height: 4,
@@ -135,13 +137,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accent.gold,
     borderRadius: 2,
   },
-  progressText: { color: Colors.text.muted, fontSize: 10 },
+  progressText: { color: Colors.text.muted, fontFamily: Fonts.mono, fontSize: 10 },
   rewardRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
   rewardPill: {
-    backgroundColor: 'rgba(255,215,0,0.1)',
+    backgroundColor: 'rgba(205,167,101,0.1)',
     borderRadius: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
   },
-  rewardText: { color: Colors.accent.gold, fontSize: 10, fontWeight: '700' },
+  rewardText: { color: Colors.accent.gold, fontSize: 10, fontFamily: Fonts.bodySemi },
 });

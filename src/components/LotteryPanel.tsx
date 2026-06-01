@@ -6,6 +6,7 @@ import { LotteryResult } from '../types/game';
 import { formatMoney } from '../utils/formatters';
 import { useHaptics } from '../hooks/useHaptics';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
 
 const TICKET_OPTIONS = [1, 5, 10, 50];
 
@@ -42,7 +43,7 @@ export function LotteryPanel() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['rgba(255,215,0,0.08)', 'rgba(255,140,0,0.04)']}
+        colors={['rgba(205,167,101,0.08)', 'rgba(162,128,62,0.04)']}
         style={[StyleSheet.absoluteFill, { borderRadius: 20 }]}
       />
 
@@ -79,7 +80,7 @@ export function LotteryPanel() {
               activeOpacity={0.85}
             >
               <LinearGradient
-                colors={canAfford ? ['#FFD700', '#FF8C00'] : ['#2a2a38', '#1d1d28']}
+                colors={canAfford ? ['#CDA765', '#A2803E'] : ['#2a2a38', '#1d1d28']}
                 style={styles.ticketGrad}
               >
                 <Text style={[styles.ticketCount, !canAfford && styles.dimText]}>
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.15)',
+    borderColor: 'rgba(205,167,101,0.15)',
     overflow: 'hidden',
   },
   header: {
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   title: {
     color: Colors.accent.gold,
     fontSize: 18,
-    fontWeight: '900',
+    fontFamily: Fonts.bodyExtra,
     letterSpacing: 1,
   },
   oddsChip: {
@@ -138,12 +139,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  oddsText: { color: Colors.text.muted, fontSize: 10, fontWeight: '700' },
+  oddsText: { color: Colors.text.muted, fontSize: 10, fontFamily: Fonts.bodyBold },
   ticketPrice: {
     color: Colors.text.muted,
     fontSize: 11,
     marginBottom: 12,
-    fontWeight: '600',
+    fontFamily: Fonts.bodySemi,
   },
   resultBox: {
     borderWidth: 1,
@@ -153,8 +154,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     backgroundColor: 'rgba(255,255,255,0.04)',
   },
-  resultLabel: { fontWeight: '900', fontSize: 15 },
-  resultPrize: { color: Colors.accent.green, fontWeight: '800', fontSize: 14, marginTop: 2 },
+  resultLabel: { fontFamily: Fonts.bodyExtra, fontSize: 15 },
+  resultPrize: { color: Colors.accent.green, fontFamily: Fonts.bodyExtra, fontSize: 14, marginTop: 2 },
   btnGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -173,8 +174,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 2,
   },
-  ticketCount: { color: '#0a0a1a', fontWeight: '900', fontSize: 13 },
-  ticketCost: { color: 'rgba(0,0,0,0.7)', fontWeight: '700', fontSize: 12 },
+  ticketCount: { color: '#0a0a1a', fontFamily: Fonts.bodyExtra, fontSize: 13 },
+  ticketCost: { color: 'rgba(0,0,0,0.7)', fontFamily: Fonts.bodyBold, fontSize: 12 },
   dimText: { color: Colors.text.muted },
   statsRow: {
     flexDirection: 'row',
@@ -189,9 +190,9 @@ const styles = StyleSheet.create({
   statLabel: {
     color: Colors.text.muted,
     fontSize: 9,
-    fontWeight: '800',
+    fontFamily: Fonts.bodyExtra,
     letterSpacing: 1,
     marginBottom: 3,
   },
-  statValue: { color: Colors.text.primary, fontWeight: '900', fontSize: 15 },
+  statValue: { color: Colors.text.primary, fontFamily: Fonts.bodyExtra, fontSize: 15 },
 });

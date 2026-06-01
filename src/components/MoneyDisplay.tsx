@@ -11,6 +11,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { formatMoney, formatIncomePerSec } from '../utils/formatters';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 import { NetWorthModal } from './NetWorthModal';
 import { StatsModal } from './StatsModal';
 
@@ -19,14 +21,14 @@ interface Props {
 }
 
 const RANKS = [
-  { min: 0,             label: 'Broke',           emoji: '🪨', color: '#888' },
-  { min: 1_000,         label: 'Side Hustler',     emoji: '💼', color: '#aaa' },
-  { min: 50_000,        label: 'Manager',          emoji: '📋', color: '#66BB6A' },
-  { min: 1_000_000,     label: 'Millionaire',      emoji: '💵', color: '#FFD700' },
-  { min: 50_000_000,    label: 'Tycoon',           emoji: '🏙️', color: '#42A5F5' },
-  { min: 1_000_000_000, label: 'Billionaire',      emoji: '🛥️', color: '#AB47BC' },
-  { min: 1e12,          label: 'Oligarch',         emoji: '✈️', color: '#FF7043' },
-  { min: 1e15,          label: '👑 Emperor',       emoji: '👑', color: '#FF1744' },
+  { min: 0,             label: 'Broke',        emoji: '○', color: '#8A94A6' },
+  { min: 1_000,         label: 'Side Hustler', emoji: '◔', color: '#AEB7C9' },
+  { min: 50_000,        label: 'Manager',      emoji: '◑', color: '#3DDC97' },
+  { min: 1_000_000,     label: 'Millionaire',  emoji: '◕', color: '#E4E9F2' },
+  { min: 50_000_000,    label: 'Tycoon',       emoji: '●', color: '#5B8DEF' },
+  { min: 1_000_000_000, label: 'Billionaire',  emoji: '◆', color: '#9D8CFF' },
+  { min: 1e12,          label: 'Oligarch',     emoji: '✦', color: '#CDA765' },
+  { min: 1e15,          label: 'Emperor',      emoji: '♛', color: '#E6CD92' },
 ];
 
 function getRank(netWorth: number) {
@@ -53,7 +55,7 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
   useEffect(() => {
     if (money !== prevMoneyRef.current) {
       scale.value = withSequence(
-        withTiming(1.03, { duration: 90, easing: Easing.out(Easing.quad) }),
+        withTiming(1.025, { duration: 90, easing: Easing.out(Easing.quad) }),
         withTiming(1, { duration: 160, easing: Easing.in(Easing.quad) })
       );
       prevMoneyRef.current = money;
@@ -70,22 +72,22 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
 
   return (
     <LinearGradient
-      colors={['#0d0d24', '#0a0a1c']}
+      colors={['#0E1422', '#0A0E18']}
       style={styles.container}
       start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+      end={{ x: 0, y: 1 }}
     >
-      {/* Top bar: brand + gems + settings */}
+      {/* Top bar: rank + gems + settings */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.brandRow} onPress={() => setShowStats(true)} activeOpacity={0.7}>
-          <Text style={styles.brandMark}>{rank.emoji}</Text>
-          <Text style={[styles.brandText, { color: rank.color }]}>{rank.label.toUpperCase()}</Text>
-          <Text style={styles.brandChevron}>›</Text>
+        <TouchableOpacity style={styles.rankChip} onPress={() => setShowStats(true)} activeOpacity={0.7}>
+          <Text style={[styles.rankMark, { color: rank.color }]}>{rank.emoji}</Text>
+          <Text style={[styles.rankText, { color: rank.color }]}>{rank.label.toUpperCase()}</Text>
+          <Text style={styles.rankChevron}>›</Text>
         </TouchableOpacity>
 
         <View style={styles.topRight}>
           <View style={styles.gemPill}>
-            <Text style={styles.gemEmoji}>💎</Text>
+            <Text style={styles.gemEmoji}>◈</Text>
             <Text style={styles.gemText}>{gems.toLocaleString()}</Text>
           </View>
           <TouchableOpacity
@@ -94,7 +96,7 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
             activeOpacity={0.7}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text style={styles.settingsIcon}>⚙️</Text>
+            <Text style={styles.settingsIcon}>⚙</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -111,7 +113,7 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
             {formatMoney(money)}
           </Animated.Text>
           <View style={styles.incomePill}>
-            <View style={styles.incomeDot} />
+            <Text style={styles.incomeArrow}>▲</Text>
             <Text style={styles.incomeText}>{formatIncomePerSec(passiveIncome)}</Text>
           </View>
         </View>
@@ -121,11 +123,17 @@ export function MoneyDisplay({ onOpenSettings }: Props) {
           onPress={() => setShowNetWorth(true)}
           activeOpacity={0.8}
         >
+          <LinearGradient
+            colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.012)']}
+            style={StyleSheet.absoluteFill}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          />
           <Text style={styles.netWorthLabel}>NET WORTH</Text>
           <Text style={styles.netWorthText} numberOfLines={1} adjustsFontSizeToFit>
             {formatMoney(netWorth)}
           </Text>
-          <Text style={styles.netWorthHint}>Tap for breakdown ›</Text>
+          <Text style={styles.netWorthHint}>Breakdown ›</Text>
         </TouchableOpacity>
       </View>
 
@@ -156,50 +164,60 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 18,
     paddingTop: 10,
-    paddingBottom: 14,
+    paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,215,0,0.12)',
+    borderBottomColor: Hairline.soft,
   },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 14,
   },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  brandMark: { fontSize: 16 },
-  brandText: {
-    color: Colors.text.secondary,
-    fontSize: 12,
-    fontWeight: '900',
-    letterSpacing: 2,
+  rankChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1,
+    borderColor: Hairline.soft,
+    paddingLeft: 10,
+    paddingRight: 8,
+    paddingVertical: 6,
+    borderRadius: 999,
   },
-  brandChevron: { color: Colors.text.muted, fontSize: 16, fontWeight: '900', marginLeft: 2 },
+  rankMark: { fontSize: 13 },
+  rankText: {
+    fontFamily: Fonts.bodyExtra,
+    fontSize: 11,
+    letterSpacing: 1.6,
+  },
+  rankChevron: { color: Colors.text.muted, fontSize: 14, fontFamily: Fonts.bodyBold },
   topRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   gemPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    backgroundColor: 'rgba(0,229,255,0.1)',
-    paddingHorizontal: 11,
-    paddingVertical: 5,
-    borderRadius: 20,
+    gap: 6,
+    backgroundColor: 'rgba(91,225,230,0.08)',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
     borderWidth: 1,
-    borderColor: 'rgba(0,229,255,0.25)',
+    borderColor: 'rgba(91,225,230,0.22)',
   },
-  gemEmoji: { fontSize: 13 },
-  gemText: { color: Colors.accent.cyan, fontSize: 14, fontWeight: '800' },
+  gemEmoji: { fontSize: 12, color: Colors.accent.cyan },
+  gemText: { color: Colors.accent.cyan, fontSize: 13, fontFamily: Fonts.monoSemi },
   settingsBtn: {
     width: 34,
     height: 34,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 11,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: Hairline.soft,
   },
-  settingsIcon: { fontSize: 16 },
+  settingsIcon: { fontSize: 16, color: Colors.text.secondary },
   mainRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -208,75 +226,73 @@ const styles = StyleSheet.create({
   balanceBlock: { flex: 1.4, justifyContent: 'center' },
   label: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 2,
-    marginBottom: 3,
+    letterSpacing: 3,
+    marginBottom: 4,
   },
   moneyText: {
-    color: Colors.accent.gold,
+    color: Colors.accent.platinum,
+    fontFamily: Fonts.displayBlack,
     fontSize: 34,
-    fontWeight: '900',
-    letterSpacing: -0.5,
+    letterSpacing: -0.8,
   },
   incomePill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    marginTop: 5,
+    marginTop: 7,
   },
-  incomeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: Colors.accent.green,
-  },
+  incomeArrow: { color: Colors.accent.green, fontSize: 9 },
   incomeText: {
     color: Colors.accent.green,
+    fontFamily: Fonts.monoSemi,
     fontSize: 13,
-    fontWeight: '700',
+    letterSpacing: -0.2,
   },
   netWorthCard: {
     flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.04)',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: Hairline.soft,
     paddingHorizontal: 14,
     paddingVertical: 12,
     justifyContent: 'center',
     alignItems: 'flex-end',
+    overflow: 'hidden',
   },
   netWorthLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 9,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-    marginBottom: 4,
+    letterSpacing: 1.8,
+    marginBottom: 5,
   },
   netWorthText: {
     color: Colors.text.primary,
-    fontSize: 19,
-    fontWeight: '900',
+    fontFamily: Fonts.monoSemi,
+    fontSize: 18,
+    letterSpacing: -0.4,
   },
   netWorthHint: {
-    color: 'rgba(255,215,0,0.6)',
+    color: Colors.accent.silver,
+    fontFamily: Fonts.bodySemi,
     fontSize: 9,
-    fontWeight: '700',
-    marginTop: 4,
+    marginTop: 5,
+    opacity: 0.8,
   },
-  eventRow: { flexDirection: 'row', gap: 6, marginTop: 12 },
+  eventRow: { flexDirection: 'row', gap: 7, marginTop: 14 },
   eventChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,165,0,0.13)',
+    backgroundColor: 'rgba(205,167,101,0.10)',
     borderWidth: 1,
-    borderColor: 'rgba(255,165,0,0.3)',
-    borderRadius: 12,
-    paddingHorizontal: 9,
-    paddingVertical: 4,
+    borderColor: 'rgba(205,167,101,0.26)',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     gap: 5,
   },
   eventEmoji: { fontSize: 12 },
-  eventName: { color: '#FFB300', fontSize: 11, fontWeight: '800' },
+  eventName: { color: Colors.accent.goldLight, fontSize: 11, fontFamily: Fonts.bodyBold },
 });

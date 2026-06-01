@@ -12,6 +12,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { LuxuryItem } from '../types/game';
 import { formatMoney } from '../utils/formatters';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 
 interface Props {
   item: LuxuryItem;
@@ -20,11 +22,11 @@ interface Props {
 }
 
 const CATEGORY_GRADIENTS: Record<string, [string, string]> = {
-  car: ['#EF5350', '#B71C1C'],
-  watch: ['#FFD54F', '#FF8F00'],
-  yacht: ['#42A5F5', '#0D47A1'],
-  jet: ['#78909C', '#263238'],
-  mansion: ['#AB47BC', '#4A148C'],
+  car: ['#FF7E8F', '#C13049'],
+  watch: ['#E6CD92', '#A2803E'],
+  yacht: ['#5B8DEF', '#2A4C9E'],
+  jet: ['#AEB7C9', '#566173'],
+  mansion: ['#9D8CFF', '#5A47B0'],
 };
 
 export const LuxuryCard = memo(function LuxuryCard({ item, money, onBuy }: Props) {
@@ -143,7 +145,7 @@ export const LuxuryCard = memo(function LuxuryCard({ item, money, onBuy }: Props
                   end={{ x: 1, y: 0 }}
                 >
                   <Text style={styles.priceText}>
-                    {canAfford ? '💳 BUY ' : '🔒 '}{formatMoney(item.cost)}
+                    {canAfford ? 'ACQUIRE · ' : '🔒 '}{formatMoney(item.cost)}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -165,12 +167,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: Hairline.soft,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 6,
   },
   header: {
     height: 104,
@@ -192,30 +194,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  ownedText: { color: Colors.accent.green, fontWeight: '900', fontSize: 10, letterSpacing: 1 },
+  ownedText: { color: Colors.accent.green, fontFamily: Fonts.bodyExtra, fontSize: 10, letterSpacing: 1.2 },
   body: { padding: 16 },
-  name: { color: Colors.text.primary, fontWeight: '900', fontSize: 18, marginBottom: 4 },
-  description: { color: Colors.text.muted, fontSize: 12, marginBottom: 12 },
+  name: { color: Colors.text.primary, fontFamily: Fonts.display, fontSize: 18, marginBottom: 5 },
+  description: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 12, marginBottom: 12 },
   bonusRow: { flexDirection: 'row', gap: 8, marginBottom: 14, flexWrap: 'wrap' },
   bonus: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: 'rgba(255,255,255,0.04)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
+    borderColor: Hairline.soft,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 7,
   },
   bonusLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 9,
-    fontWeight: '800',
     letterSpacing: 1,
-    marginBottom: 2,
+    marginBottom: 3,
   },
-  bonusValue: { fontWeight: '900', fontSize: 15 },
+  bonusValue: { fontFamily: Fonts.monoSemi, fontSize: 15 },
   priceTag: { borderRadius: 13, overflow: 'hidden' },
   priceTagLocked: { opacity: 0.6 },
   priceGrad: { paddingHorizontal: 16, paddingVertical: 13, alignItems: 'center' },
-  priceText: { color: '#0a0a1a', fontWeight: '900', fontSize: 15 },
+  priceText: { color: '#0E1422', fontFamily: Fonts.bodyExtra, fontSize: 14, letterSpacing: 0.5 },
 });

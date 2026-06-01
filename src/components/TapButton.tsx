@@ -23,6 +23,8 @@ import { FloatingNumber } from './FloatingNumber';
 import { FortuneWheelModal } from './FortuneWheel';
 import { useHaptics } from '../hooks/useHaptics';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 import { GameConfig } from '../constants/gameConfig';
 import { formatMoney } from '../utils/formatters';
 import { calcComboMultiplier, calcTapUpgradeCost } from '../utils/calculations';
@@ -172,7 +174,7 @@ export function TapButton() {
         {comboCount > 1 && (
           <View style={styles.comboBadge}>
             <Text style={styles.comboText}>
-              🔥 {comboCount}x COMBO · {comboMult.toFixed(1)}x
+              {comboCount}× COMBO · {comboMult.toFixed(1)}×
             </Text>
           </View>
         )}
@@ -198,14 +200,16 @@ export function TapButton() {
             </Animated.View>
 
             <LinearGradient
-              colors={['#FFE44D', '#FFD700', '#FF8C00']}
+              colors={['#F6F8FC', '#C7D0DE', '#94A2BC']}
               style={styles.button}
               start={{ x: 0.2, y: 0 }}
               end={{ x: 0.8, y: 1 }}
             >
-              <Text style={styles.coinEmoji}>💰</Text>
-              <Text style={styles.tapLabel}>TAP</Text>
-              <Text style={styles.levelLabel}>Lv.{tapLevel}</Text>
+              <View style={styles.coinInner}>
+                <Text style={styles.coinGlyph}>$</Text>
+                <Text style={styles.tapLabel}>TAP</Text>
+                <Text style={styles.levelLabel}>LV.{tapLevel}</Text>
+              </View>
             </LinearGradient>
           </Animated.View>
         </TouchableWithoutFeedback>
@@ -214,13 +218,13 @@ export function TapButton() {
           <TouchableWithoutFeedback onPress={() => upgradeTap()}>
             <View style={[styles.upgradeButton, !canUpgrade && styles.upgradeButtonDisabled]}>
               <LinearGradient
-                colors={canUpgrade ? ['#2979FF', '#1565C0'] : ['#2a2a38', '#1d1d28']}
+                colors={canUpgrade ? ['#5B8DEF', '#3D6FD6'] : ['#1b2030', '#141925']}
                 style={styles.upgradeGrad}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
                 <View style={styles.upgradeIconWrap}>
-                  <Text style={styles.upgradeIcon}>⬆</Text>
+                  <Text style={styles.upgradeIcon}>↑</Text>
                 </View>
                 <View style={styles.upgradeTextBlock}>
                   <Text style={styles.upgradeText}>UPGRADE TAP</Text>
@@ -253,46 +257,47 @@ const styles = StyleSheet.create({
   statStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: 'rgba(255,255,255,0.04)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.09)',
+    borderColor: Hairline.soft,
     borderRadius: 16,
     paddingHorizontal: 6,
-    paddingVertical: 8,
+    paddingVertical: 9,
     marginBottom: 16,
-    minWidth: 200,
+    minWidth: 210,
   },
   statChip: { flex: 1, alignItems: 'center' },
   statChipLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 9,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-    marginBottom: 2,
+    letterSpacing: 1.8,
+    marginBottom: 3,
   },
   statChipValue: {
-    color: Colors.accent.gold,
-    fontSize: 17,
-    fontWeight: '900',
+    color: Colors.accent.platinum,
+    fontFamily: Fonts.monoSemi,
+    fontSize: 16,
+    letterSpacing: -0.3,
   },
   statChipDivider: {
     width: 1,
     height: 28,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: Hairline.soft,
   },
   comboBadge: {
-    backgroundColor: 'rgba(255,109,0,0.18)',
+    backgroundColor: 'rgba(91,225,230,0.12)',
     borderWidth: 1,
-    borderColor: 'rgba(255,109,0,0.5)',
-    borderRadius: 20,
+    borderColor: 'rgba(91,225,230,0.42)',
+    borderRadius: 999,
     paddingHorizontal: 16,
-    paddingVertical: 5,
+    paddingVertical: 6,
     marginBottom: 12,
   },
   comboText: {
-    color: '#FF6D00',
-    fontWeight: '900',
-    fontSize: 14,
+    color: Colors.accent.cyan,
+    fontFamily: Fonts.displaySemi,
+    fontSize: 13,
     letterSpacing: 1,
   },
   buttonContainer: {
@@ -306,7 +311,7 @@ const styles = StyleSheet.create({
     width: BUTTON_SIZE + 40,
     height: BUTTON_SIZE + 40,
     borderRadius: (BUTTON_SIZE + 40) / 2,
-    backgroundColor: Colors.accent.gold,
+    backgroundColor: Colors.accent.blue,
   },
   rotatingRing: {
     position: 'absolute',
@@ -317,10 +322,10 @@ const styles = StyleSheet.create({
   },
   ringDot: {
     position: 'absolute',
-    width: 6,
-    height: 6,
+    width: 5,
+    height: 5,
     borderRadius: 3,
-    backgroundColor: Colors.accent.gold,
+    backgroundColor: Colors.accent.silver,
   },
   button: {
     width: BUTTON_SIZE,
@@ -328,27 +333,38 @@ const styles = StyleSheet.create({
     borderRadius: BUTTON_SIZE / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.accent.gold,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.55)',
+    shadowColor: '#5B8DEF',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 20,
+    shadowOpacity: 0.6,
+    shadowRadius: 24,
     elevation: 20,
   },
-  coinEmoji: {
-    fontSize: 72,
-    marginBottom: 4,
+  coinInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  coinGlyph: {
+    fontFamily: Fonts.displayBlack,
+    fontSize: 76,
+    color: '#0E1422',
+    lineHeight: 84,
+    marginBottom: 2,
   },
   tapLabel: {
-    color: '#0a0a1a',
-    fontSize: 22,
-    fontWeight: '900',
-    letterSpacing: 4,
+    color: '#0E1422',
+    fontFamily: Fonts.displayBlack,
+    fontSize: 20,
+    letterSpacing: 6,
+    marginLeft: 6,
   },
   levelLabel: {
-    color: 'rgba(0,0,0,0.6)',
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: 2,
+    color: 'rgba(14,20,34,0.55)',
+    fontFamily: Fonts.bodyBold,
+    fontSize: 11,
+    letterSpacing: 1.5,
+    marginTop: 3,
   },
   wheelFab: {
     position: 'absolute',
@@ -365,29 +381,29 @@ const styles = StyleSheet.create({
   },
   wheelFabFree: {
     borderColor: Colors.accent.gold + '88',
-    backgroundColor: 'rgba(255,215,0,0.1)',
+    backgroundColor: 'rgba(205,167,101,0.12)',
   },
   wheelFabEmoji: { fontSize: 26 },
   freeBadge: {
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: Colors.accent.red,
+    backgroundColor: Colors.accent.gold,
     borderRadius: 6,
     paddingHorizontal: 4,
     paddingVertical: 1,
   },
-  freeBadgeText: { color: '#fff', fontSize: 8, fontWeight: '900' },
+  freeBadgeText: { color: '#0E1422', fontSize: 8, fontFamily: Fonts.bodyExtra },
   upgradeRow: {
     marginTop: 24,
   },
   upgradeButton: {
     borderRadius: 18,
     overflow: 'hidden',
-    shadowColor: '#2979FF',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
+    shadowColor: '#5B8DEF',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.45,
+    shadowRadius: 16,
     elevation: 8,
   },
   upgradeButtonDisabled: {
@@ -410,19 +426,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  upgradeIcon: { color: '#fff', fontSize: 18, fontWeight: '900' },
+  upgradeIcon: { color: '#fff', fontSize: 18, fontFamily: Fonts.displayBlack },
   upgradeTextBlock: { alignItems: 'flex-start' },
   upgradeText: {
     color: '#fff',
-    fontWeight: '900',
+    fontFamily: Fonts.displaySemi,
     fontSize: 14,
     letterSpacing: 0.5,
   },
   upgradeSubText: {
-    color: 'rgba(255,255,255,0.7)',
-    fontWeight: '700',
+    color: 'rgba(255,255,255,0.72)',
+    fontFamily: Fonts.bodySemi,
     fontSize: 11,
-    marginTop: 1,
+    marginTop: 2,
   },
   upgradeCostBadge: {
     backgroundColor: 'rgba(0,0,0,0.28)',
@@ -432,7 +448,7 @@ const styles = StyleSheet.create({
   },
   upgradeCostText: {
     color: '#fff',
-    fontWeight: '900',
+    fontFamily: Fonts.monoSemi,
     fontSize: 14,
   },
 });

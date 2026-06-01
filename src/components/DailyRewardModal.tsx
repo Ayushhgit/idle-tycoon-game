@@ -19,6 +19,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGameStore } from '../store/gameStore';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
 import { GameConfig } from '../constants/gameConfig';
 import { useHaptics } from '../hooks/useHaptics';
 
@@ -90,7 +91,7 @@ export function DailyRewardModal({ visible, onClose }: Props) {
       <View style={styles.overlay}>
         <Animated.View style={[styles.container, containerStyle]}>
           <LinearGradient
-            colors={['#1a0533', '#0a0a1a']}
+            colors={['#171B33', '#0A0E18']}
             style={[StyleSheet.absoluteFill, { borderRadius: 28 }]}
           />
 
@@ -137,7 +138,7 @@ export function DailyRewardModal({ visible, onClose }: Props) {
 
           <TouchableOpacity onPress={handleClaim} style={styles.claimButton}>
             <LinearGradient
-              colors={[Colors.accent.purple, '#7B1FA2']}
+              colors={['#B6A8FF', '#9D8CFF']}
               style={styles.claimGrad}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(212,0,249,0.3)',
+    borderColor: 'rgba(157,140,255,0.3)',
   },
   glowRing: {
     position: 'absolute',
@@ -195,17 +196,17 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: Colors.accent.purple,
   },
-  titleEmoji: { fontSize: 56, marginTop: 10, marginBottom: 8 },
+  titleEmoji: { fontSize: 52, marginTop: 10, marginBottom: 8 },
   title: {
     color: Colors.text.primary,
-    fontSize: 24,
-    fontWeight: '900',
+    fontFamily: Fonts.displayBlack,
+    fontSize: 23,
     letterSpacing: 2,
   },
   streakText: {
-    color: Colors.accent.purple,
-    fontSize: 15,
-    fontWeight: '700',
+    color: Colors.accent.purpleLight,
+    fontFamily: Fonts.bodySemi,
+    fontSize: 14,
     marginTop: 6,
     marginBottom: 20,
   },
@@ -226,18 +227,18 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.08)',
   },
   dayBoxClaimed: {
-    backgroundColor: 'rgba(212,0,249,0.15)',
+    backgroundColor: 'rgba(157,140,255,0.15)',
     borderColor: Colors.accent.purple,
     opacity: 0.6,
   },
   dayBoxToday: {
-    backgroundColor: 'rgba(212,0,249,0.25)',
-    borderColor: Colors.accent.purple,
+    backgroundColor: 'rgba(157,140,255,0.25)',
+    borderColor: Colors.accent.purpleLight,
     borderWidth: 2,
   },
-  dayNum: { color: Colors.text.muted, fontSize: 9, fontWeight: '700' },
+  dayNum: { color: Colors.text.muted, fontFamily: Fonts.bodyBold, fontSize: 9 },
   dayEmoji: { fontSize: 16, marginVertical: 2 },
-  dayGems: { color: Colors.accent.cyan, fontWeight: '900', fontSize: 10 },
+  dayGems: { color: Colors.accent.cyan, fontFamily: Fonts.monoSemi, fontSize: 10 },
   rewardPreview: {
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.05)',
@@ -249,15 +250,15 @@ const styles = StyleSheet.create({
   },
   rewardLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 11,
-    fontWeight: '700',
     letterSpacing: 2,
     marginBottom: 6,
   },
-  gemsBig: { color: Colors.accent.cyan, fontSize: 26, fontWeight: '900' },
+  gemsBig: { color: Colors.accent.cyan, fontFamily: Fonts.displayBlack, fontSize: 24 },
   claimButton: { width: '100%', borderRadius: 16, overflow: 'hidden', marginBottom: 12 },
   claimGrad: { paddingVertical: 16, alignItems: 'center' },
-  claimText: { color: '#fff', fontWeight: '900', fontSize: 18, letterSpacing: 1 },
+  claimText: { color: '#0E1422', fontFamily: Fonts.displayBlack, fontSize: 17, letterSpacing: 1 },
   skipButton: { paddingVertical: 8 },
-  skipText: { color: Colors.text.muted, fontSize: 13 },
+  skipText: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 13 },
 });

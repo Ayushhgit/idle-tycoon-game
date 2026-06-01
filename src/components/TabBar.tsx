@@ -8,6 +8,8 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { TabName } from '../types/game';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 
 interface Tab {
   key: TabName;
@@ -52,7 +54,7 @@ export function TabBar({ activeTab, onTabPress }: Props) {
     <View style={styles.wrapper}>
       <View style={styles.bar}>
         <LinearGradient
-          colors={['rgba(28,28,58,0.92)', 'rgba(14,14,32,0.96)']}
+          colors={['rgba(22,29,46,0.94)', 'rgba(12,16,26,0.97)']}
           style={StyleSheet.absoluteFill}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
@@ -61,7 +63,7 @@ export function TabBar({ activeTab, onTabPress }: Props) {
         {/* sliding active pill */}
         <Animated.View style={[styles.pill, pillStyle, { width: TAB_WIDTH }]}>
           <LinearGradient
-            colors={['rgba(255,215,0,0.20)', 'rgba(255,140,0,0.08)']}
+            colors={['rgba(228,233,242,0.16)', 'rgba(91,141,239,0.07)']}
             style={styles.pillGrad}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
@@ -107,12 +109,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.09)',
+    borderColor: Hairline.soft,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 16,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 18,
   },
   pill: {
     position: 'absolute',
@@ -122,22 +124,22 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.30)',
+    borderColor: 'rgba(228,233,242,0.26)',
   },
   pillGrad: { flex: 1 },
   tab: {
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 3,
+    gap: 4,
   },
-  emoji: { fontSize: 19, opacity: 0.42 },
+  emoji: { fontSize: 18, opacity: 0.4 },
   emojiActive: { opacity: 1 },
   label: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 8,
-    fontWeight: '800',
-    letterSpacing: 0.3,
+    letterSpacing: 0.6,
   },
-  labelActive: { color: Colors.accent.gold },
+  labelActive: { color: Colors.accent.platinum },
 });

@@ -23,6 +23,7 @@ import { formatMoney } from '../utils/formatters';
 import { useHaptics } from '../hooks/useHaptics';
 import { Confetti } from './Confetti';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
 
 const { width } = Dimensions.get('window');
 const WHEEL_SIZE = Math.min(width * 0.82, 340);
@@ -146,7 +147,7 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
                     strokeWidth={1.5}
                   />
                 ))}
-                <Circle cx={R} cy={R} r={R - 1} fill="none" stroke="rgba(255,215,0,0.5)" strokeWidth={2} />
+                <Circle cx={R} cy={R} r={R - 1} fill="none" stroke="rgba(205,167,101,0.5)" strokeWidth={2} />
               </Svg>
 
               {/* Emoji labels overlaid at each segment mid-angle */}
@@ -166,7 +167,7 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
 
             {/* Center hub (static) */}
             <View style={styles.hub}>
-              <LinearGradient colors={['#FFE44D', '#FF8C00']} style={styles.hubGrad}>
+              <LinearGradient colors={['#E6CD92', '#A2803E']} style={styles.hubGrad}>
                 <Text style={styles.hubText}>{spinning ? '···' : 'SPIN'}</Text>
               </LinearGradient>
             </View>
@@ -197,7 +198,7 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
                 style={[styles.spinBtn, spinning && styles.btnDisabled]}
                 activeOpacity={0.85}
               >
-                <LinearGradient colors={['#FFD700', '#FF8C00']} style={styles.spinGrad}>
+                <LinearGradient colors={['#CDA765', '#A2803E']} style={styles.spinGrad}>
                   <Text style={styles.spinBtnText}>{spinning ? 'SPINNING…' : '🎡 FREE SPIN'}</Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -208,7 +209,7 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
                 style={[styles.spinBtn, (!canGemSpin || spinning) && styles.btnDisabled]}
                 activeOpacity={0.85}
               >
-                <LinearGradient colors={['#2979FF', '#1565C0']} style={styles.spinGrad}>
+                <LinearGradient colors={['#5B8DEF', '#3D6FD6']} style={styles.spinGrad}>
                   <Text style={[styles.spinBtnText, { color: '#fff' }]}>
                     {spinning ? 'SPINNING…' : '💎 SPIN (3 Gems)'}
                   </Text>
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderBottomWidth: 0,
-    borderColor: 'rgba(255,215,0,0.22)',
+    borderColor: 'rgba(205,167,101,0.22)',
     paddingBottom: 8,
   },
   handle: {
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
   title: {
     color: Colors.accent.gold,
     fontSize: 22,
-    fontWeight: '900',
+    fontFamily: Fonts.bodyExtra,
     textAlign: 'center',
     letterSpacing: 2,
   },
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
     marginBottom: 18,
-    fontWeight: '700',
+    fontFamily: Fonts.bodyBold,
   },
   wheelContainer: {
     alignItems: 'center',
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
     width: WHEEL_SIZE + 18,
     height: WHEEL_SIZE + 18,
     borderRadius: (WHEEL_SIZE + 18) / 2,
-    backgroundColor: 'rgba(255,215,0,0.12)',
+    backgroundColor: 'rgba(205,167,101,0.12)',
   },
   wheelWrap: {
     width: WHEEL_SIZE,
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
     zIndex: 25,
   },
   hubGrad: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  hubText: { color: '#0a0a1a', fontWeight: '900', fontSize: 12, letterSpacing: 1 },
+  hubText: { color: '#0a0a1a', fontFamily: Fonts.bodyExtra, fontSize: 12, letterSpacing: 1 },
   resultBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -324,13 +325,13 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   resultEmoji: { fontSize: 34 },
-  resultLabel: { fontWeight: '900', fontSize: 16 },
-  resultAmount: { color: Colors.text.secondary, fontWeight: '800', fontSize: 14, marginTop: 2 },
+  resultLabel: { fontFamily: Fonts.bodyExtra, fontSize: 16 },
+  resultAmount: { color: Colors.text.secondary, fontFamily: Fonts.bodyExtra, fontSize: 14, marginTop: 2 },
   btnRow: { paddingHorizontal: 16, marginBottom: 10 },
   spinBtn: { borderRadius: 16, overflow: 'hidden' },
   btnDisabled: { opacity: 0.45 },
   spinGrad: { paddingVertical: 16, alignItems: 'center' },
-  spinBtnText: { color: '#0a0a1a', fontWeight: '900', fontSize: 16, letterSpacing: 1 },
+  spinBtnText: { color: '#0a0a1a', fontFamily: Fonts.bodyExtra, fontSize: 16, letterSpacing: 1 },
   closeBtn: {
     marginHorizontal: 16,
     marginBottom: 20,
@@ -339,5 +340,5 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
   },
-  closeBtnText: { color: Colors.text.secondary, fontWeight: '800', fontSize: 15 },
+  closeBtnText: { color: Colors.text.secondary, fontFamily: Fonts.bodyExtra, fontSize: 15 },
 });

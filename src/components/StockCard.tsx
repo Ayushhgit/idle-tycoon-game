@@ -6,6 +6,8 @@ import { StockChart } from './StockChart';
 import { formatMoney, formatPercent } from '../utils/formatters';
 import { calcStockProfitLoss, calcStockProfitLossPct } from '../utils/calculations';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 
 interface Props {
   stock: Stock;
@@ -125,7 +127,7 @@ export const StockCard = memo(function StockCard({ stock, money, canBuy, onBuy, 
               activeOpacity={0.85}
               style={[styles.tradeBtn, !affordable && styles.disabledBtn]}
             >
-              <LinearGradient colors={['#00E676', '#00B248']} style={styles.tradeGrad}>
+              <LinearGradient colors={['#3DDC97', '#22B97E']} style={styles.tradeGrad}>
                 <Text style={styles.tradeBtnText}>BUY</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -135,8 +137,8 @@ export const StockCard = memo(function StockCard({ stock, money, canBuy, onBuy, 
               activeOpacity={0.85}
               style={[styles.tradeBtn, stock.sharesOwned < shares && styles.disabledBtn]}
             >
-              <LinearGradient colors={['#FF5252', '#C62828']} style={styles.tradeGrad}>
-                <Text style={styles.tradeBtnText}>SELL</Text>
+              <LinearGradient colors={['#FF6C86', '#E03E5E']} style={styles.tradeGrad}>
+                <Text style={[styles.tradeBtnText, { color: '#2a0a12' }]}>SELL</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -201,11 +203,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
   },
-  ticker: { fontWeight: '900', fontSize: 13, letterSpacing: 1 },
-  sector: { color: Colors.text.muted, fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
-  stockName: { color: Colors.text.primary, fontWeight: '800', fontSize: 15 },
+  ticker: { fontFamily: Fonts.monoSemi, fontSize: 13, letterSpacing: 1 },
+  sector: { color: Colors.text.muted, fontSize: 10, fontFamily: Fonts.bodySemi, letterSpacing: 0.5 },
+  stockName: { color: Colors.text.primary, fontFamily: Fonts.displaySemi, fontSize: 15 },
   rightInfo: { alignItems: 'flex-end' },
-  price: { color: Colors.text.primary, fontWeight: '900', fontSize: 19 },
+  price: { color: Colors.text.primary, fontFamily: Fonts.monoSemi, fontSize: 19, letterSpacing: -0.3 },
   changePill: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -215,8 +217,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 3,
   },
-  changeArrow: { fontSize: 9, fontWeight: '900' },
-  change: { fontSize: 12, fontWeight: '800' },
+  changeArrow: { fontSize: 9 },
+  change: { fontSize: 12, fontFamily: Fonts.monoSemi },
   chartRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -224,43 +226,44 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   plBlock: { alignItems: 'flex-end' },
-  plLabel: { color: Colors.text.muted, fontSize: 9, fontWeight: '800', letterSpacing: 0.5 },
-  plValue: { fontWeight: '900', fontSize: 14 },
-  plPct: { fontSize: 11, fontWeight: '700' },
+  plLabel: { color: Colors.text.muted, fontSize: 9, fontFamily: Fonts.bodyBold, letterSpacing: 0.5 },
+  plValue: { fontFamily: Fonts.monoSemi, fontSize: 14 },
+  plPct: { fontSize: 11, fontFamily: Fonts.mono },
   tapHint: {
-    color: Colors.text.muted,
+    color: Colors.accent.silver,
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: Fonts.bodySemi,
     textAlign: 'center',
     marginTop: 8,
+    opacity: 0.7,
   },
   tradeSection: {
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.07)',
+    borderTopColor: Hairline.soft,
   },
   inputRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
-  sharesLabel: { color: Colors.text.muted, fontSize: 11, fontWeight: '800', letterSpacing: 1 },
+  sharesLabel: { color: Colors.text.muted, fontSize: 11, fontFamily: Fonts.bodyBold, letterSpacing: 1 },
   sharesInput: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255,255,255,0.07)',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
     color: Colors.text.primary,
-    fontWeight: '800',
+    fontFamily: Fonts.monoSemi,
     fontSize: 16,
     width: 80,
     textAlign: 'center',
   },
   costBadge: {
     marginLeft: 'auto',
-    backgroundColor: 'rgba(255,215,0,0.12)',
+    backgroundColor: 'rgba(205,167,101,0.12)',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 7,
   },
-  totalCost: { color: Colors.accent.gold, fontWeight: '900', fontSize: 14 },
+  totalCost: { color: Colors.accent.gold, fontFamily: Fonts.monoSemi, fontSize: 14 },
   quickBtns: { flexDirection: 'row', gap: 8, marginBottom: 10 },
   quickBtn: {
     flex: 1,
@@ -271,10 +274,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.06)',
   },
-  quickBtnText: { color: Colors.text.secondary, fontWeight: '800', fontSize: 13 },
+  quickBtnText: { color: Colors.text.secondary, fontFamily: Fonts.monoSemi, fontSize: 13 },
   maxQuickBtn: {
-    backgroundColor: 'rgba(255,215,0,0.1)',
-    borderColor: 'rgba(255,215,0,0.3)',
+    backgroundColor: 'rgba(205,167,101,0.1)',
+    borderColor: 'rgba(205,167,101,0.3)',
   },
   buttonRow: { flexDirection: 'row', gap: 10, marginBottom: 8 },
   maxBtn: {
@@ -284,11 +287,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: Hairline.soft,
   },
-  maxBtnText: { color: Colors.text.secondary, fontWeight: '800', fontSize: 12, letterSpacing: 0.5 },
+  maxBtnText: { color: Colors.text.secondary, fontFamily: Fonts.bodyBold, fontSize: 12, letterSpacing: 0.5 },
   tradeBtn: { flex: 1, borderRadius: 13, overflow: 'hidden' },
   tradeGrad: { paddingVertical: 13, alignItems: 'center' },
   disabledBtn: { opacity: 0.4 },
-  tradeBtnText: { color: '#06210f', fontWeight: '900', fontSize: 14, letterSpacing: 1.5 },
+  tradeBtnText: { color: '#06210f', fontFamily: Fonts.displayBlack, fontSize: 14, letterSpacing: 1.5 },
 });

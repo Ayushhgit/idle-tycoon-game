@@ -11,6 +11,8 @@ import { Property } from '../types/game';
 import { formatMoney, formatIncomePerSec, formatPercent } from '../utils/formatters';
 import { calcPropertyUpgradeCost } from '../utils/calculations';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
+import { Hairline } from '../constants/theme';
 
 interface Props {
   property: Property;
@@ -20,11 +22,11 @@ interface Props {
 }
 
 const PROPERTY_COLORS: Record<string, [string, string]> = {
-  apartment: ['#78909C', '#546E7A'],
-  villa: ['#66BB6A', '#43A047'],
-  hotel: ['#FF7043', '#E64A19'],
-  mall: ['#5C6BC0', '#3949AB'],
-  skyscraper: ['#FFD54F', '#FFB300'],
+  apartment: ['#8A94A6', '#5C6678'],
+  villa: ['#3DDC97', '#22B97E'],
+  hotel: ['#FFA07A', '#E0714A'],
+  mall: ['#7B86C9', '#5460A8'],
+  skyscraper: ['#E6CD92', '#CDA765'],
 };
 
 export const PropertyCard = memo(function PropertyCard({
@@ -130,7 +132,7 @@ export const PropertyCard = memo(function PropertyCard({
                 end={{ x: 1, y: 0 }}
               >
                 <Text style={[styles.actionText, !canAfford && styles.actionTextDim]}>
-                  {property.owned ? '⬆ UPGRADE' : '🏠 BUY'} · {formatMoney(cost)}
+                  {property.owned ? '↑ UPGRADE' : 'ACQUIRE'} · {formatMoney(cost)}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -150,12 +152,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexDirection: 'row',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
+    borderColor: Hairline.soft,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 14,
+    elevation: 5,
   },
   imageArea: {
     width: 90,
@@ -172,19 +174,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  levelText: { color: '#fff', fontWeight: '900', fontSize: 10 },
+  levelText: { color: '#fff', fontFamily: Fonts.bodyExtra, fontSize: 10 },
   info: {
     flex: 1,
     padding: 14,
   },
   name: {
     color: Colors.text.primary,
-    fontWeight: '800',
+    fontFamily: Fonts.displaySemi,
     fontSize: 16,
-    marginBottom: 3,
+    marginBottom: 4,
   },
   description: {
     color: Colors.text.muted,
+    fontFamily: Fonts.body,
     fontSize: 11,
     marginBottom: 8,
   },
@@ -196,15 +199,15 @@ const styles = StyleSheet.create({
   stat: { flex: 1 },
   statLabel: {
     color: Colors.text.muted,
+    fontFamily: Fonts.bodyBold,
     fontSize: 9,
-    fontWeight: '700',
-    letterSpacing: 1,
-    marginBottom: 2,
+    letterSpacing: 1.2,
+    marginBottom: 3,
   },
-  statValue: { color: Colors.text.primary, fontWeight: '800', fontSize: 13 },
+  statValue: { color: Colors.text.primary, fontFamily: Fonts.monoSemi, fontSize: 12.5 },
   actionBtn: { borderRadius: 12, overflow: 'hidden', marginTop: 4 },
   disabledBtn: { opacity: 0.4 },
-  actionGrad: { paddingHorizontal: 14, paddingVertical: 10, alignItems: 'center' },
-  actionText: { color: '#0a0a1a', fontWeight: '900', fontSize: 13 },
+  actionGrad: { paddingHorizontal: 14, paddingVertical: 11, alignItems: 'center' },
+  actionText: { color: '#0E1422', fontFamily: Fonts.bodyExtra, fontSize: 12.5, letterSpacing: 0.4 },
   actionTextDim: { color: Colors.text.muted },
 });

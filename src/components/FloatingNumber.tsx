@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { formatMoney } from '../utils/formatters';
 import { Colors } from '../constants/colors';
+import { Fonts } from '../constants/typography';
 
 interface Props {
   value: number;
@@ -41,7 +42,7 @@ export function FloatingNumber({ value, x, y, isCritical, onDone }: Props) {
     transform: [{ translateY: translateY.value }, { scale: scale.value }],
   }));
 
-  const textColor = isCritical ? '#FF6D00' : Colors.accent.gold;
+  const textColor = isCritical ? Colors.accent.cyan : Colors.accent.platinum;
   const fontSize = isCritical ? 28 : 20;
 
   return (
@@ -53,8 +54,8 @@ export function FloatingNumber({ value, x, y, isCritical, onDone }: Props) {
       ]}
       pointerEvents="none"
     >
-      {isCritical && <Text style={styles.critLabel}>CRITICAL!</Text>}
-      <Text style={[styles.text, { color: textColor, fontSize, fontWeight: isCritical ? '900' : '800' }]}>
+      {isCritical && <Text style={styles.critLabel}>CRITICAL</Text>}
+      <Text style={[styles.text, { color: textColor, fontSize }]}>
         +{formatMoney(value)}
       </Text>
     </Animated.View>
@@ -68,16 +69,17 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   text: {
-    textShadowColor: 'rgba(0,0,0,0.8)',
+    fontFamily: Fonts.displayBlack,
+    textShadowColor: 'rgba(0,0,0,0.85)',
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    textShadowRadius: 5,
   },
   critLabel: {
-    color: '#FF6D00',
-    fontSize: 12,
-    fontWeight: '900',
-    letterSpacing: 2,
-    textShadowColor: 'rgba(0,0,0,0.8)',
+    color: Colors.accent.cyan,
+    fontFamily: Fonts.bodyExtra,
+    fontSize: 11,
+    letterSpacing: 2.5,
+    textShadowColor: 'rgba(0,0,0,0.85)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
