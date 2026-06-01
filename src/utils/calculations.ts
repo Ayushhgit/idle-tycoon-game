@@ -1,4 +1,12 @@
-import { Business, Property, LuxuryItem, Stock, MutualFund, PrestigeState } from '../types/game';
+import {
+  Business,
+  Property,
+  LuxuryItem,
+  Stock,
+  MutualFund,
+  PrestigeState,
+  PrestigeUpgradeTrack,
+} from '../types/game';
 import { GameConfig } from '../constants/gameConfig';
 import { BUSINESS_MILESTONE_MULTIPLIERS } from '../constants/businesses';
 
@@ -100,11 +108,21 @@ export function calcPropertyUpgradeCost(property: Property): number {
   return Math.floor(property.baseCost * property.level * 0.5);
 }
 
-export function calcOfflineEarnings(passiveIncome: number, elapsedMs: number): number {
+export function calcOfflineEarnings(
+  passiveIncome: number,
+  elapsedMs: number,
+  offlineMultiplier = 1
+): number {
   const maxMs = GameConfig.offline.maxOfflineHours * 3600 * 1000;
   const clampedMs = Math.min(elapsedMs, maxMs);
   const elapsedSecs = clampedMs / 1000;
-  return passiveIncome * elapsedSecs * GameConfig.offline.offlineEfficiency;
+  return passiveIncome * elapsedSecs * GameConfig.offline.offlineEfficiency * offlineMultiplier;
+}
+
+/** Token cost to buy the next level of a prestige upgrade track. */
+export function calcPrestigeUpgradeCost(track: PrestigeUpgradeTrack, level: number): number {
+  const cfg = GameConfig.prestige.upgrades[track];
+  return Math.floor(cfg.baseCost * Math.pow(cfg.growth, level));
 }
 
 export function calcPrestigeRequirement(prestigeCount: number): number {

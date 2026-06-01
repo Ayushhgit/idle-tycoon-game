@@ -124,9 +124,9 @@ export function StockScreen() {
                     </Text>
                   </View>
                   <View style={styles.fundStat}>
-                    <Text style={styles.fundStatLabel}>RETURN</Text>
+                    <Text style={styles.fundStatLabel}>AVG RETURN</Text>
                     <Text style={[styles.fundStatValue, { color: Colors.accent.gold }]}>
-                      {formatPercent(fund.annualReturn, 0)}/yr
+                      ~{(fund.ratePerMin * 100).toFixed(1)}%/min
                     </Text>
                   </View>
                 </View>

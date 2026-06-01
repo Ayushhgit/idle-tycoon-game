@@ -32,9 +32,14 @@ export const GameConfig = {
     minimumNetWorth: 1_000_000,
     baseTokenReward: 1,
     tokenMultiplierPerPrestige: 0.1,
-    tapBoostPerToken: 0.05,
-    incomeBoostPerToken: 0.05,
-    stockLuckPerToken: 0.02,
+    // Token shop — spend prestige tokens to permanently buy each track up.
+    // cost(level) = floor(baseCost * growth^level); effect is additive per level.
+    upgrades: {
+      income:  { baseCost: 1, growth: 1.5, perLevel: 0.10, maxLevel: 100 },
+      tap:     { baseCost: 1, growth: 1.5, perLevel: 0.15, maxLevel: 100 },
+      luck:    { baseCost: 2, growth: 1.6, perLevel: 0.02, maxLevel: 50 },
+      offline: { baseCost: 2, growth: 1.6, perLevel: 0.10, maxLevel: 50 },
+    },
   },
   dailyReward: {
     baseGems: 10,
@@ -49,11 +54,9 @@ export const GameConfig = {
   },
   fund: {
     compoundIntervalMs: 10_000,
-    annualReturns: {
-      safe: 0.04,
-      growth: 0.10,
-      aggressive: 0.20,
-    },
+    // Cap how many minutes of growth a single compound tick can apply, so
+    // returning after a long offline gap can't explode a fund's value.
+    maxCompoundMinutes: 10,
   },
   save: {
     intervalMs: 30_000,

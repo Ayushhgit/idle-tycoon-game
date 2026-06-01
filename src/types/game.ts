@@ -83,12 +83,23 @@ export interface AchievementReward {
   incomeMultiplier?: number;
 }
 
+export type PrestigeUpgradeTrack = 'income' | 'tap' | 'luck' | 'offline';
+
+export interface PrestigeUpgrades {
+  income: number;
+  tap: number;
+  luck: number;
+  offline: number;
+}
+
 export interface PrestigeState {
   count: number;
   tokens: number;
   permanentTapMultiplier: number;
   permanentIncomeMultiplier: number;
   permanentStockLuck: number;
+  permanentOfflineMultiplier: number;
+  upgrades: PrestigeUpgrades;
   lastPrestigeAt: number;
 }
 
@@ -129,7 +140,11 @@ export interface MutualFund {
   name: string;
   description: string;
   riskLevel: 'safe' | 'growth' | 'aggressive';
-  annualReturn: number;
+  /** Mean return per minute of play (game-paced, not annual). */
+  ratePerMin: number;
+  /** Risk: fraction of the mean rate that the realized rate can swing each
+   *  tick (0 = steady, >1 = can post a losing tick). */
+  volatility: number;
   invested: number;
   currentValue: number;
   lastCompoundAt: number;

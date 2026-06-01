@@ -8,15 +8,51 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { useGameStore } from '../store/gameStore';
-import { formatMoney } from '../utils/formatters';
-import { calcPrestigeTokens, calcPrestigeRequirement } from '../utils/calculations';
+import { formatMoney, formatNumber } from '../utils/formatters';
+import {
+  calcPrestigeTokens,
+  calcPrestigeRequirement,
+  calcPrestigeUpgradeCost,
+} from '../utils/calculations';
 import { Colors } from '../constants/colors';
 import { Fonts } from '../constants/typography';
 import { Hairline } from '../constants/theme';
 import { GameConfig } from '../constants/gameConfig';
+import { PrestigeUpgradeTrack } from '../types/game';
 import { useHaptics } from '../hooks/useHaptics';
 import { Confetti } from '../components/Confetti';
+
+type IoniconName = keyof typeof Ionicons.glyphMap;
+
+const UPGRADE_DEFS: {
+  track: PrestigeUpgradeTrack;
+  label: string;
+  blurb: string;
+  icon: IoniconName;
+  color: string;
+}[] = [
+  { track: 'income',  label: 'Income Multiplier', blurb: 'All passive income',  icon: 'trending-up',   color: '#3DDC97' },
+  { track: 'tap',     label: 'Tap Power',         blurb: 'Every tap earns more', icon: 'finger-print',  color: '#E6CD92' },
+  { track: 'luck',    label: 'Market Luck',       blurb: 'Better stock swings',  icon: 'sparkles',      color: '#5B8DEF' },
+  { track: 'offline', label: 'Offline Earnings',  blurb: 'Idle income while away',icon: 'moon',          color: '#9D8CFF' },
+];
+
+function effectStr(track: PrestigeUpgradeTrack, p: { permanentIncomeMultiplier: number; permanentTapMultiplier: number; permanentStockLuck: number; permanentOfflineMultiplier: number }) {
+  switch (track) {
+    case 'income':  return `×${p.permanentIncomeMultiplier.toFixed(2)}`;
+    case 'tap':     return `×${p.permanentTapMultiplier.toFixed(2)}`;
+    case 'luck':    return `+${(p.permanentStockLuck * 100).toFixed(0)}%`;
+    case 'offline': return `+${((p.permanentOfflineMultiplier - 1) * 100).toFixed(0)}%`;
+  }
+}
+
+function perLevelStr(track: PrestigeUpgradeTrack): string {
+  const per = GameConfig.prestige.upgrades[track].perLevel;
+  if (track === 'income' || track === 'tap') return `+${per.toFixed(2)}× per level`;
+  return `+${(per * 100).toFixed(0)}% per level`;
+}
 
 const { width } = Dimensions.get('window');
 
@@ -24,8 +60,14 @@ export function PrestigeScreen() {
   const prestigeData = useGameStore((s) => s.prestigeData);
   const netWorth = useGameStore((s) => s.netWorth);
   const performPrestige = useGameStore((s) => s.performPrestige);
-  const { achievementHaptic } = useHaptics();
+  const buyPrestigeUpgrade = useGameStore((s) => s.buyPrestigeUpgrade);
+  const { achievementHaptic, purchaseHaptic, errorHaptic } = useHaptics();
   const [confettiTrigger, setConfettiTrigger] = useState(0);
+
+  const handleBuyUpgrade = (track: PrestigeUpgradeTrack) => {
+    const ok = buyPrestigeUpgrade(track);
+    ok ? purchaseHaptic() : errorHaptic();
+  };
 
   const requirement = calcPrestigeRequirement(prestigeData.count);
   const canPrestige = netWorth >= requirement;
@@ -50,8 +92,8 @@ export function PrestigeScreen() {
   const handlePrestige = () => {
     if (!canPrestige) return;
     Alert.alert(
-      '✨ PRESTIGE',
-      `Reset your progress for ${tokens} Prestige Tokens?\n\nYou keep: Achievements, Gems, Permanent bonuses.\n\nYour income multiplier and tap power increase permanently!`,
+      '✦ PRESTIGE',
+      `Reset your progress for ${tokens} Prestige Token${tokens === 1 ? '' : 's'}?\n\nYou keep: Achievements, Gems, and every upgrade you've bought.\n\nSpend tokens in the shop below to permanently boost income, tap, luck and offline earnings.`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -67,34 +109,6 @@ export function PrestigeScreen() {
       ]
     );
   };
-
-  const currentTokens = prestigeData.tokens;
-  const nextTapBoost = 1 + (currentTokens + tokens) * GameConfig.prestige.tapBoostPerToken;
-  const nextIncomeBoost = 1 + (currentTokens + tokens) * GameConfig.prestige.incomeBoostPerToken;
-
-  const PRESTIGE_PERKS = [
-    {
-      label: 'Tap Multiplier',
-      current: `${prestigeData.permanentTapMultiplier.toFixed(2)}x`,
-      after: `${nextTapBoost.toFixed(2)}x`,
-      emoji: '👆',
-      color: Colors.accent.gold,
-    },
-    {
-      label: 'Income Multiplier',
-      current: `${prestigeData.permanentIncomeMultiplier.toFixed(2)}x`,
-      after: `${nextIncomeBoost.toFixed(2)}x`,
-      emoji: '💰',
-      color: Colors.accent.green,
-    },
-    {
-      label: 'Stock Luck',
-      current: `+${(prestigeData.permanentStockLuck * 100).toFixed(1)}%`,
-      after: `+${((currentTokens + tokens) * GameConfig.prestige.stockLuckPerToken * 100).toFixed(1)}%`,
-      emoji: '📈',
-      color: Colors.accent.blue,
-    },
-  ];
 
   return (
     <View style={{ flex: 1 }}>
@@ -123,33 +137,67 @@ export function PrestigeScreen() {
         </View>
         <Text style={styles.prestigeCount}>PRESTIGE {prestigeData.count}</Text>
         <View style={styles.tokenChip}>
-          <Text style={styles.tokenChipText}>💠 {prestigeData.tokens} Tokens</Text>
+          <Ionicons name="diamond" size={13} color={Colors.accent.purpleLight} />
+          <Text style={styles.tokenChipText}>{formatNumber(prestigeData.tokens)} TOKENS</Text>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>PERMANENT BONUSES</Text>
-        {PRESTIGE_PERKS.map((perk) => (
-          <View key={perk.label} style={styles.perkRow}>
-            <View style={[styles.perkIconChip, { backgroundColor: perk.color + '22', borderColor: perk.color + '44' }]}>
-              <Text style={styles.perkEmoji}>{perk.emoji}</Text>
-            </View>
-            <Text style={styles.perkLabel}>{perk.label}</Text>
-            <View style={styles.perkValues}>
-              <View style={[styles.perkPill, { backgroundColor: perk.color + '1A' }]}>
-                <Text style={[styles.perkCurrent, { color: perk.color }]}>{perk.current}</Text>
+        <View style={styles.shopHead}>
+          <Text style={styles.sectionTitle}>TOKEN SHOP</Text>
+          <Text style={styles.shopBalance}>Balance: {formatNumber(prestigeData.tokens)}</Text>
+        </View>
+        {UPGRADE_DEFS.map((def) => {
+          const level = prestigeData.upgrades[def.track];
+          const cfg = GameConfig.prestige.upgrades[def.track];
+          const maxed = level >= cfg.maxLevel;
+          const cost = calcPrestigeUpgradeCost(def.track, level);
+          const canAfford = prestigeData.tokens >= cost;
+          return (
+            <View key={def.track} style={styles.upgradeCard}>
+              <View style={[styles.upIcon, { backgroundColor: def.color + '1F', borderColor: def.color + '3A' }]}>
+                <Ionicons name={def.icon} size={20} color={def.color} />
               </View>
-              {canPrestige && (
-                <>
-                  <Text style={styles.arrow}>→</Text>
-                  <View style={[styles.perkPill, { backgroundColor: perk.color + '33' }]}>
-                    <Text style={[styles.perkAfter, { color: perk.color }]}>{perk.after}</Text>
+              <View style={styles.upInfo}>
+                <View style={styles.upTopRow}>
+                  <Text style={styles.upName}>{def.label}</Text>
+                  <View style={[styles.upLevelPill, { backgroundColor: def.color + '1F' }]}>
+                    <Text style={[styles.upLevelText, { color: def.color }]}>LV {level}</Text>
                   </View>
-                </>
-              )}
+                </View>
+                <Text style={styles.upBlurb}>{def.blurb}</Text>
+                <View style={styles.upStatsRow}>
+                  <Text style={[styles.upValue, { color: def.color }]}>
+                    {effectStr(def.track, prestigeData)}
+                  </Text>
+                  <Text style={styles.upPerLevel}>{perLevelStr(def.track)}</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => handleBuyUpgrade(def.track)}
+                disabled={maxed || !canAfford}
+                activeOpacity={0.85}
+                style={styles.upBuyBtn}
+              >
+                <LinearGradient
+                  colors={maxed ? ['#1b2030', '#141925'] : canAfford ? [def.color, def.color + 'CC'] : ['#1b2030', '#141925']}
+                  style={styles.upBuyGrad}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  {maxed ? (
+                    <Text style={styles.upBuyMax}>MAX</Text>
+                  ) : (
+                    <>
+                      <Ionicons name="diamond" size={12} color={canAfford ? '#0E1422' : Colors.text.muted} />
+                      <Text style={[styles.upBuyCost, !canAfford && styles.upBuyCostDim]}>{formatNumber(cost)}</Text>
+                    </>
+                  )}
+                </LinearGradient>
+              </TouchableOpacity>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </View>
 
       <View style={styles.section}>
@@ -295,6 +343,9 @@ const styles = StyleSheet.create({
   tokenChip: {
     zIndex: 10,
     marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: 'rgba(157,140,255,0.14)',
     borderWidth: 1,
     borderColor: 'rgba(157,140,255,0.38)',
@@ -302,8 +353,51 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
   },
-  tokenChipText: { color: Colors.accent.purpleLight, fontSize: 13, fontFamily: Fonts.monoSemi },
+  tokenChipText: { color: Colors.accent.purpleLight, fontSize: 13, fontFamily: Fonts.monoSemi, letterSpacing: 0.5 },
   section: { paddingHorizontal: 16, marginBottom: 20 },
+  shopHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 12 },
+  shopBalance: { color: Colors.accent.purpleLight, fontFamily: Fonts.monoSemi, fontSize: 12 },
+  upgradeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.bg.card,
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: Hairline.soft,
+    gap: 12,
+  },
+  upIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 13,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  upInfo: { flex: 1 },
+  upTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2 },
+  upName: { color: Colors.text.primary, fontFamily: Fonts.displaySemi, fontSize: 14 },
+  upLevelPill: { paddingHorizontal: 7, paddingVertical: 2, borderRadius: 7 },
+  upLevelText: { fontFamily: Fonts.bodyExtra, fontSize: 9.5, letterSpacing: 0.5 },
+  upBlurb: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, marginBottom: 5 },
+  upStatsRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  upValue: { fontFamily: Fonts.monoSemi, fontSize: 14 },
+  upPerLevel: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 10 },
+  upBuyBtn: { borderRadius: 12, overflow: 'hidden' },
+  upBuyGrad: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    minWidth: 70,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  upBuyCost: { color: '#0E1422', fontFamily: Fonts.monoSemi, fontSize: 14 },
+  upBuyCostDim: { color: Colors.text.muted },
+  upBuyMax: { color: Colors.text.muted, fontFamily: Fonts.bodyExtra, fontSize: 12, letterSpacing: 1 },
   sectionTitle: {
     color: Colors.text.muted,
     fontFamily: Fonts.bodyBold,

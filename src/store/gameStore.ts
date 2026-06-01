@@ -10,6 +10,7 @@ import {
   WorldEvent,
   MutualFund,
   PrestigeState,
+  PrestigeUpgradeTrack,
   CasinoResult,
   CasinoGameType,
   WheelPrize,
@@ -35,15 +36,17 @@ import {
   calcPrestigeTokens,
   calcPrestigeRequirement,
   calcOfflineEarnings,
+  calcPrestigeUpgradeCost,
 } from '../utils/calculations';
 
 const INITIAL_MUTUAL_FUNDS: MutualFund[] = [
   {
     id: 'safe_fund',
     name: 'Safe Harbor Fund',
-    description: 'Low risk, stable 4% annual return',
+    description: 'Low risk · ~0.5%/min, steady',
     riskLevel: 'safe',
-    annualReturn: 0.04,
+    ratePerMin: 0.005,
+    volatility: 0.15,
     invested: 0,
     currentValue: 0,
     lastCompoundAt: 0,
@@ -51,9 +54,10 @@ const INITIAL_MUTUAL_FUNDS: MutualFund[] = [
   {
     id: 'growth_fund',
     name: 'Growth Accelerator',
-    description: 'Moderate risk, 10% annual return',
+    description: 'Moderate risk · ~1.5%/min, some swings',
     riskLevel: 'growth',
-    annualReturn: 0.10,
+    ratePerMin: 0.015,
+    volatility: 0.65,
     invested: 0,
     currentValue: 0,
     lastCompoundAt: 0,
@@ -61,9 +65,10 @@ const INITIAL_MUTUAL_FUNDS: MutualFund[] = [
   {
     id: 'aggressive_fund',
     name: 'Alpha Strike Fund',
-    description: 'High risk, 20% annual return',
+    description: 'High risk · ~3%/min, can lose',
     riskLevel: 'aggressive',
-    annualReturn: 0.20,
+    ratePerMin: 0.03,
+    volatility: 1.25,
     invested: 0,
     currentValue: 0,
     lastCompoundAt: 0,
@@ -96,6 +101,8 @@ function buildInitialState(): GameState {
       permanentTapMultiplier: 1,
       permanentIncomeMultiplier: 1,
       permanentStockLuck: 0,
+      permanentOfflineMultiplier: 1,
+      upgrades: { income: 0, tap: 0, luck: 0, offline: 0 },
       lastPrestigeAt: 0,
     },
     achievements: INITIAL_ACHIEVEMENTS.map((a) => ({ ...a })),
@@ -165,6 +172,7 @@ export interface GameActions {
   activateBooster: (key: keyof GameState['boosters']) => boolean;
   autoClickerTick: () => void;
   performPrestige: () => boolean;
+  buyPrestigeUpgrade: (track: PrestigeUpgradeTrack) => boolean;
   claimDailyReward: () => { gems: number; multiplier: number } | null;
   checkAchievements: () => string[];
   addMoney: (amount: number) => void;
@@ -499,10 +507,18 @@ export const useGameStore = create<GameStore>()((set, get) => ({
       produce((draft: GameState) => {
         draft.mutualFunds.forEach((fund) => {
           if (fund.invested <= 0 || fund.lastCompoundAt === 0) return;
-          const elapsedMs = now - fund.lastCompoundAt;
-          const intervalRate =
-            fund.annualReturn * (elapsedMs / (365.25 * 24 * 3600 * 1000));
-          fund.currentValue = fund.currentValue * (1 + intervalRate);
+          // Game-paced compounding: the realized rate is the per-minute mean
+          // jittered by the fund's risk, so aggressive funds swing (and can
+          // post losing ticks) while safe funds stay steady. Elapsed minutes
+          // are capped so a long offline gap can't balloon the value.
+          const elapsedMin = Math.min(
+            (now - fund.lastCompoundAt) / 60000,
+            GameConfig.fund.maxCompoundMinutes
+          );
+          if (elapsedMin <= 0) return;
+          const jitter = (Math.random() * 2 - 1) * fund.volatility; // -vol..+vol
+          const realizedRate = fund.ratePerMin * (1 + jitter);
+          fund.currentValue = Math.max(0, fund.currentValue * Math.pow(1 + realizedRate, elapsedMin));
           fund.lastCompoundAt = now;
         });
       })
@@ -615,18 +631,13 @@ export const useGameStore = create<GameStore>()((set, get) => ({
 
     set(
       produce((draft: GameState) => {
-        const newTokens = draft.prestigeData.tokens + tokens;
-        const newCount = draft.prestigeData.count + 1;
-        const tapBoost = 1 + newTokens * GameConfig.prestige.tapBoostPerToken;
-        const incomeBoost = 1 + newTokens * GameConfig.prestige.incomeBoostPerToken;
-        const stockLuck = newTokens * GameConfig.prestige.stockLuckPerToken;
-
+        // Tokens are now a spendable currency (see buyPrestigeUpgrade); the
+        // permanent multipliers and bought upgrade levels carry across the
+        // reset instead of being recomputed from the token balance.
         const savedPrestige: PrestigeState = {
-          count: newCount,
-          tokens: newTokens,
-          permanentTapMultiplier: tapBoost,
-          permanentIncomeMultiplier: incomeBoost,
-          permanentStockLuck: stockLuck,
+          ...draft.prestigeData,
+          count: draft.prestigeData.count + 1,
+          tokens: draft.prestigeData.tokens + tokens,
           lastPrestigeAt: Date.now(),
         };
 
@@ -640,6 +651,31 @@ export const useGameStore = create<GameStore>()((set, get) => ({
         draft.achievements = savedAchievements;
         draft.settings = savedSettings;
         draft.gems = savedGems;
+      })
+    );
+    get().refreshPassiveIncome();
+    return true;
+  },
+
+  buyPrestigeUpgrade(track) {
+    const state = get();
+    const cfg = GameConfig.prestige.upgrades[track];
+    const level = state.prestigeData.upgrades[track];
+    if (level >= cfg.maxLevel) return false;
+    const cost = calcPrestigeUpgradeCost(track, level);
+    if (state.prestigeData.tokens < cost) return false;
+
+    set(
+      produce((draft: GameState) => {
+        const p = draft.prestigeData;
+        p.tokens -= cost;
+        p.upgrades[track] += 1;
+        // Apply the level's effect additively onto the cached multiplier so
+        // achievement bonuses already baked in are preserved.
+        if (track === 'income') p.permanentIncomeMultiplier += cfg.perLevel;
+        else if (track === 'tap') p.permanentTapMultiplier += cfg.perLevel;
+        else if (track === 'luck') p.permanentStockLuck += cfg.perLevel;
+        else if (track === 'offline') p.permanentOfflineMultiplier += cfg.perLevel;
       })
     );
     get().refreshPassiveIncome();
@@ -794,7 +830,29 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     }
 
     const elapsed = now - (saved.lastActive ?? now);
-    const merged: GameState = { ...buildInitialState(), ...saved };
+    const fresh = buildInitialState();
+    const merged: GameState = { ...fresh, ...saved };
+    // Migrate older saves whose prestigeData predates the token shop.
+    merged.prestigeData = {
+      ...fresh.prestigeData,
+      ...saved.prestigeData,
+      upgrades: { ...fresh.prestigeData.upgrades, ...(saved.prestigeData?.upgrades ?? {}) },
+      permanentOfflineMultiplier:
+        saved.prestigeData?.permanentOfflineMultiplier ??
+        fresh.prestigeData.permanentOfflineMultiplier,
+    };
+    // Migrate funds from the old annual-return model: keep the player's
+    // invested/value/timestamp but pull rate + volatility from the defaults.
+    merged.mutualFunds = fresh.mutualFunds.map((def) => {
+      const savedFund = saved.mutualFunds?.find((f) => f.id === def.id);
+      if (!savedFund) return def;
+      return {
+        ...def,
+        invested: savedFund.invested ?? 0,
+        currentValue: savedFund.currentValue ?? 0,
+        lastCompoundAt: savedFund.lastCompoundAt ?? 0,
+      };
+    });
     set(merged);
 
     const state = get();
@@ -808,7 +866,7 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     );
 
     if (elapsed > 5000 && passive > 0) {
-      const offline = calcOfflineEarnings(passive, elapsed);
+      const offline = calcOfflineEarnings(passive, elapsed, state.prestigeData.permanentOfflineMultiplier);
       if (offline > 0) {
         set(produce((draft: GameState) => {
           draft.offlineEarnings = offline;
