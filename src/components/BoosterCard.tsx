@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/colors';
 import { Fonts } from '../constants/typography';
 import { Hairline } from '../constants/theme';
@@ -15,12 +16,13 @@ import { formatDuration } from '../utils/formatters';
 import { GameState } from '../types/game';
 
 type BoosterKey = keyof GameState['boosters'];
+type IoniconName = keyof typeof Ionicons.glyphMap;
 
 interface BoosterDef {
   key: BoosterKey;
   name: string;
   description: string;
-  emoji: string;
+  icon: IoniconName;
   gemCost: number;
   colors: [string, string];
 }
@@ -30,7 +32,7 @@ const BOOSTERS: BoosterDef[] = [
     key: 'incomeBoost2x',
     name: '2x Income',
     description: 'Double passive income for 2 minutes',
-    emoji: '⚡',
+    icon: 'flash',
     gemCost: 20,
     colors: ['#E6CD92', '#CDA765'],
   },
@@ -38,7 +40,7 @@ const BOOSTERS: BoosterDef[] = [
     key: 'tapMultiplier3x',
     name: '3x Tap Power',
     description: 'Triple tap earnings for 90 seconds',
-    emoji: '👆',
+    icon: 'finger-print',
     gemCost: 15,
     colors: ['#5B8DEF', '#3D6FD6'],
   },
@@ -46,7 +48,7 @@ const BOOSTERS: BoosterDef[] = [
     key: 'autoClicker',
     name: 'Auto Clicker',
     description: 'Auto-taps 1x/sec for 60 seconds',
-    emoji: '🤖',
+    icon: 'hardware-chip',
     gemCost: 10,
     colors: ['#9D8CFF', '#6F5BD6'],
   },
@@ -54,7 +56,7 @@ const BOOSTERS: BoosterDef[] = [
     key: 'investmentBoost',
     name: 'Investment Boost',
     description: '10% off stock purchases for 3 minutes',
-    emoji: '📈',
+    icon: 'trending-up',
     gemCost: 25,
     colors: ['#3DDC97', '#22B97E'],
   },
@@ -69,7 +71,10 @@ interface Props {
 export function BoosterPanel({ boosters, gems, onActivate }: Props) {
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>⚡ BOOSTERS</Text>
+      <View style={styles.sectionTitleRow}>
+        <Ionicons name="flash" size={13} color={Colors.accent.gold} />
+        <Text style={styles.sectionTitle}>BOOSTERS</Text>
+      </View>
       {BOOSTERS.map((def) => {
         const state = boosters[def.key];
         const remaining = state.active ? Math.max(0, state.endsAt - Date.now()) : 0;
@@ -132,17 +137,20 @@ const BoosterCard = memo(function BoosterCard({
             style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
           />
         )}
-        <View style={[styles.iconArea, { backgroundColor: def.colors[0] + '25' }]}>
-          <Text style={styles.emoji}>{def.emoji}</Text>
+        <View style={[styles.iconArea, { backgroundColor: def.colors[0] + '22', borderColor: def.colors[0] + '3A' }]}>
+          <Ionicons name={def.icon} size={22} color={def.colors[0]} />
         </View>
 
         <View style={styles.info}>
           <Text style={styles.name}>{def.name}</Text>
           <Text style={styles.description}>{def.description}</Text>
           {isActive && (
-            <Text style={[styles.timer, { color: def.colors[0] }]}>
-              ⏱ {formatDuration(remaining)} remaining
-            </Text>
+            <View style={styles.timerRow}>
+              <Ionicons name="time-outline" size={12} color={def.colors[0]} />
+              <Text style={[styles.timer, { color: def.colors[0] }]}>
+                {formatDuration(remaining)} remaining
+              </Text>
+            </View>
           )}
         </View>
 
@@ -159,7 +167,7 @@ const BoosterCard = memo(function BoosterCard({
               <Text style={styles.activeText}>ACTIVE</Text>
             ) : (
               <>
-                <Text style={styles.gemEmoji}>◈</Text>
+                <Ionicons name="diamond" size={12} color="#0E1422" />
                 <Text style={styles.gemCost}>{def.gemCost}</Text>
               </>
             )}
@@ -172,13 +180,18 @@ const BoosterCard = memo(function BoosterCard({
 
 const styles = StyleSheet.create({
   container: { paddingVertical: 8 },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    marginBottom: 10,
+    paddingHorizontal: 16,
+  },
   sectionTitle: {
     color: Colors.text.secondary,
     fontFamily: Fonts.displaySemi,
     fontSize: 13,
     letterSpacing: 1,
-    marginBottom: 10,
-    paddingHorizontal: 16,
   },
   card: {
     flexDirection: 'row',
@@ -201,12 +214,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    borderWidth: 1,
   },
   emoji: { fontSize: 24 },
   info: { flex: 1 },
   name: { color: Colors.text.primary, fontFamily: Fonts.displaySemi, fontSize: 14 },
   description: { color: Colors.text.muted, fontFamily: Fonts.body, fontSize: 11, marginTop: 3 },
-  timer: { fontFamily: Fonts.monoSemi, fontSize: 12, marginTop: 4 },
+  timerRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 5 },
+  timer: { fontFamily: Fonts.monoSemi, fontSize: 12 },
   buyBtn: { borderRadius: 10, overflow: 'hidden' },
   buyBtnDisabled: { opacity: 0.5 },
   buyGrad: {

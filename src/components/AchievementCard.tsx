@@ -6,6 +6,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { Achievement } from '../types/game';
 import { Colors } from '../constants/colors';
 import { Fonts } from '../constants/typography';
@@ -48,7 +49,9 @@ export const AchievementCard = memo(function AchievementCard({ achievement, isNe
             <Text style={[styles.name, !achievement.unlocked && styles.nameLocked]}>
               {achievement.name}
             </Text>
-            {achievement.unlocked && <Text style={styles.checkmark}>✓</Text>}
+            {achievement.unlocked && (
+              <Ionicons name="checkmark-circle" size={16} color={Colors.accent.gold} />
+            )}
           </View>
           <Text style={styles.description}>{achievement.description}</Text>
 
@@ -65,8 +68,9 @@ export const AchievementCard = memo(function AchievementCard({ achievement, isNe
 
           <View style={styles.rewardRow}>
             {achievement.reward.gems !== undefined && (
-              <View style={styles.rewardPill}>
-                <Text style={styles.rewardText}>💎 {achievement.reward.gems}</Text>
+              <View style={[styles.rewardPill, styles.rewardPillRow]}>
+                <Ionicons name="diamond" size={10} color={Colors.accent.cyan} />
+                <Text style={[styles.rewardText, { color: Colors.accent.cyan }]}>{achievement.reward.gems}</Text>
               </View>
             )}
             {achievement.reward.incomeMultiplier !== undefined && (
@@ -145,5 +149,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 3,
   },
+  rewardPillRow: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(91,225,230,0.1)' },
   rewardText: { color: Colors.accent.gold, fontSize: 10, fontFamily: Fonts.bodySemi },
 });

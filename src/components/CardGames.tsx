@@ -43,7 +43,7 @@ function PlayingCard({ card, hidden, small }: { card?: Card; hidden?: boolean; s
   if (hidden || !card) {
     return (
       <View style={[styles.card, { width: w, height: h }]}>
-        <LinearGradient colors={['#2d1a4e', '#1a0a2e']} style={[StyleSheet.absoluteFill, { borderRadius: 7 }]} />
+        <LinearGradient colors={['#1A2138', '#11172A']} style={[StyleSheet.absoluteFill, { borderRadius: 7 }]} />
         <Text style={styles.cardBack}>🎴</Text>
       </View>
     );
@@ -51,8 +51,8 @@ function PlayingCard({ card, hidden, small }: { card?: Card; hidden?: boolean; s
   const red = card.suit === '♥' || card.suit === '♦';
   return (
     <View style={[styles.card, styles.cardFace, { width: w, height: h }]}>
-      <Text style={[styles.cardCorner, { color: red ? '#E53935' : '#1a1a2e' }]}>{rankLabel(card.rank)}</Text>
-      <Text style={[styles.cardSuit, { color: red ? '#E53935' : '#1a1a2e' }]}>{card.suit}</Text>
+      <Text style={[styles.cardCorner, { color: red ? '#E53935' : '#161D2E' }]}>{rankLabel(card.rank)}</Text>
+      <Text style={[styles.cardSuit, { color: red ? '#E53935' : '#161D2E' }]}>{card.suit}</Text>
     </View>
   );
 }
@@ -208,7 +208,7 @@ export function BlackjackGame() {
 
   return (
     <View style={styles.gameCard}>
-      <LinearGradient colors={['#0a2010', '#0d200d']} style={[styles.gameBg, { borderRadius: 20 }]} />
+      <LinearGradient colors={['#11172A', '#0A0E18']} style={[styles.gameBg, { borderRadius: 20 }]} />
       <Text style={styles.gameTitle}>🃏 BLACKJACK</Text>
       <Text style={styles.gameSub}>Beat the dealer to 21 · Blackjack pays 2.5×</Text>
 
@@ -379,7 +379,7 @@ export function TeenPattiGame() {
 
   return (
     <View style={styles.gameCard}>
-      <LinearGradient colors={['#1a0a2e', '#0d0020']} style={[styles.gameBg, { borderRadius: 20 }]} />
+      <LinearGradient colors={['#11172A', '#0A0E18']} style={[styles.gameBg, { borderRadius: 20 }]} />
       <Text style={styles.gameTitle}>👑 TEEN PATTI</Text>
       <Text style={styles.gameSub}>3-card showdown · Trail pays 8× · Pure Seq 5×</Text>
 

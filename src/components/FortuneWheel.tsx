@@ -122,7 +122,7 @@ export function FortuneWheelModal({ visible, onClose }: Props) {
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <LinearGradient
-            colors={['#1c0a36', '#0d0020', '#08081a']}
+            colors={['#1c0a36', '#0A0E18', '#08081a']}
             style={[StyleSheet.absoluteFill, { borderRadius: 28 }]}
           />
 

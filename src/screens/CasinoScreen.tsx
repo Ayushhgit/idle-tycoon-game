@@ -18,6 +18,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { useGameStore } from '../store/gameStore';
 import { CasinoResult, CasinoState } from '../types/game';
 import { LotteryPanel } from '../components/LotteryPanel';
@@ -182,18 +183,22 @@ function CasinoHeader({
 }) {
   return (
     <LinearGradient
-      colors={['#1a0a2e', '#2d0a4e', '#1a0a2e']}
+      colors={['#11172A', '#161D34', '#11172A']}
       style={styles.header}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
       <View style={styles.headerTop}>
-        <View>
-          <Text style={styles.headerTitle}>🎰 CASINO</Text>
-          <Text style={styles.headerSub}>Tough odds • Bet smart • Cash out anytime</Text>
+        <View style={styles.headerTitleRow}>
+          <View style={styles.headerIcon}>
+            <Ionicons name="dice" size={20} color={Colors.accent.gold} />
+          </View>
+          <View>
+            <Text style={styles.headerTitle}>CASINO</Text>
+            <Text style={styles.headerSub}>Bet smart · cash out anytime</Text>
+          </View>
         </View>
         <View style={styles.tokenBadge}>
-          <Text style={styles.tokenEmoji}>🎫</Text>
           <Text style={styles.tokenCount}>{formatNumber(tokens)}</Text>
           <Text style={styles.tokenLabel}>TOKENS</Text>
         </View>
@@ -201,12 +206,13 @@ function CasinoHeader({
       <View style={styles.headerBtnRow}>
         <TouchableOpacity onPress={onBuyPress} style={styles.buyBtn} activeOpacity={0.85}>
           <LinearGradient
-            colors={['#CDA765', '#A2803E']}
+            colors={['#E6CD92', '#CDA765']}
             style={styles.buyGrad}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <Text style={styles.buyText}>🎫 BUY</Text>
+            <Ionicons name="add" size={16} color="#0E1422" />
+            <Text style={styles.buyText}>BUY TOKENS</Text>
           </LinearGradient>
         </TouchableOpacity>
         <TouchableOpacity
@@ -221,7 +227,8 @@ function CasinoHeader({
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <Text style={styles.cashOutText}>💵 CASH OUT</Text>
+            <Ionicons name="cash-outline" size={16} color="#06210f" />
+            <Text style={styles.cashOutText}>CASH OUT</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -295,7 +302,7 @@ function BuyTokensPanel({
               style={[styles.pkgCard, !canAfford && styles.pkgCardDisabled]}
             >
               <LinearGradient
-                colors={canAfford ? ['#2d1a4e', '#1a0a2e'] : ['#222', '#111']}
+                colors={canAfford ? ['#1A2138', '#11172A'] : ['#222', '#111']}
                 style={styles.pkgGrad}
               >
                 <Text style={styles.pkgEmoji}>{pkg.emoji}</Text>
@@ -350,7 +357,7 @@ function ResultBanner({ result }: { result: CasinoResult }) {
   return (
     <Animated.View style={[styles.resultBanner, animStyle]}>
       <LinearGradient
-        colors={result.won ? ['rgba(61,220,151,0.15)', 'rgba(61,220,151,0.05)'] : ['rgba(255,23,68,0.15)', 'rgba(255,23,68,0.05)']}
+        colors={result.won ? ['rgba(61,220,151,0.15)', 'rgba(61,220,151,0.05)'] : ['rgba(255,92,122,0.15)', 'rgba(255,92,122,0.05)']}
         style={styles.resultGrad}
       >
         <Text style={styles.resultEmoji}>{result.won ? '🎉' : '💸'}</Text>
@@ -418,12 +425,12 @@ function SlotsGame({ tokens, onPlay }: { tokens: number; onPlay: (bet: number) =
 
   return (
     <View style={styles.gameCard}>
-      <LinearGradient colors={['#1a0a2e', '#0d0020']} style={[styles.gameCardBg, { borderRadius: 20 }]} />
-      <Text style={styles.gameTitle}>🎰 SLOT MACHINE</Text>
+      <LinearGradient colors={['#11172A', '#0A0E18']} style={[styles.gameCardBg, { borderRadius: 20 }]} />
+      <Text style={styles.gameTitle}>SLOT MACHINE</Text>
 
       <View style={styles.slotMachine}>
         <LinearGradient
-          colors={['#2d1a4e', '#1a0a2e']}
+          colors={['#1A2138', '#11172A']}
           style={styles.slotBody}
         >
           <View style={styles.reelsRow}>
@@ -521,9 +528,9 @@ function CoinFlipGame({
 
   return (
     <View style={styles.gameCard}>
-      <LinearGradient colors={['#0a1a2e', '#0d1a20']} style={[styles.gameCardBg, { borderRadius: 20 }]} />
-      <Text style={styles.gameTitle}>🪙 COIN FLIP</Text>
-      <Text style={styles.gameSubtitle}>1.95x payout • tough 44% win chance</Text>
+      <LinearGradient colors={['#11172A', '#0A0E18']} style={[styles.gameCardBg, { borderRadius: 20 }]} />
+      <Text style={styles.gameTitle}>COIN FLIP</Text>
+      <Text style={styles.gameSubtitle}>1.95x payout · 44% win chance</Text>
 
       <Animated.View style={[styles.coinWrapper, coinStyle]}>
         <LinearGradient
@@ -568,7 +575,7 @@ function CoinFlipGame({
           style={styles.playBtnGrad}
         >
           <Text style={styles.playBtnText}>
-            {flipping ? '🪙 Flipping...' : `🎯 FLIP (${bet} tokens)`}
+            {flipping ? 'FLIPPING…' : `FLIP · ${bet}`}
           </Text>
         </LinearGradient>
       </TouchableOpacity>
@@ -632,14 +639,14 @@ function RouletteGame({
 
   return (
     <View style={styles.gameCard}>
-      <LinearGradient colors={['#0a2010', '#0d200d']} style={[styles.gameCardBg, { borderRadius: 20 }]} />
-      <Text style={styles.gameTitle}>🎡 ROULETTE</Text>
-      <Text style={styles.gameSubtitle}>Red/Black/Even/Odd: 1.8x • Number: 30x</Text>
+      <LinearGradient colors={['#11172A', '#0A0E18']} style={[styles.gameCardBg, { borderRadius: 20 }]} />
+      <Text style={styles.gameTitle}>ROULETTE</Text>
+      <Text style={styles.gameSubtitle}>Red/Black/Even/Odd 1.8x · Number 30x</Text>
 
       <View style={styles.rouletteCenter}>
         <Animated.View style={[styles.rouletteWheel, wheelStyle]}>
           <LinearGradient
-            colors={['#1a4a1a', '#0d200d', '#1a4a1a']}
+            colors={['#1A2138', '#0A0E18', '#1A2138']}
             style={styles.wheelGrad}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -677,11 +684,11 @@ function RouletteGame({
             <LinearGradient
               colors={
                 betType === t
-                  ? t === 'red'   ? ['#c62828', '#b71c1c']
-                  : t === 'black' ? ['#424242', '#212121']
-                  : t === 'even'  ? ['#3D6FD6', '#0D47A1']
-                  :                 ['#6A1B9A', '#5A47B0']
-                  : ['#1a1a2e', '#111']
+                  ? t === 'red'   ? ['#E03E5E', '#C13049']
+                  : t === 'black' ? ['#3A4150', '#222938']
+                  : t === 'even'  ? ['#3D6FD6', '#3D6FD6']
+                  :                 ['#6F5BD6', '#6F5BD6']
+                  : ['#161D2E', '#111']
               }
               style={styles.betTypeBtnGrad}
             >
@@ -697,7 +704,7 @@ function RouletteGame({
         style={[styles.numberBetRow, betType === 'number' && styles.numberBetRowActive]}
       >
         <LinearGradient
-          colors={betType === 'number' ? ['#CDA765', '#E65100'] : ['#1a1a2e', '#111']}
+          colors={betType === 'number' ? ['#CDA765', '#A2803E'] : ['#161D2E', '#111']}
           style={styles.numberBetGrad}
         >
           <Text style={styles.numberBetLabel}>EXACT NUMBER (30x)</Text>
@@ -725,11 +732,11 @@ function RouletteGame({
         style={[styles.playBtn, (spinning || tokens < bet) && styles.playBtnDisabled]}
       >
         <LinearGradient
-          colors={spinning || tokens < bet ? ['#333', '#222'] : ['#2e7d32', '#1b5e20']}
+          colors={spinning || tokens < bet ? ['#333', '#222'] : ['#22B97E', '#1A8A5E']}
           style={styles.playBtnGrad}
         >
           <Text style={styles.playBtnText}>
-            {spinning ? '🎡 Spinning...' : `🎯 SPIN (${bet} tokens)`}
+            {spinning ? 'SPINNING…' : `SPIN · ${bet}`}
           </Text>
         </LinearGradient>
       </TouchableOpacity>
@@ -808,7 +815,7 @@ function HistoryPanel({ history }: { history: CasinoResult[] }) {
   };
   return (
     <View style={styles.historyPanel}>
-      <Text style={styles.historyTitle}>📋 RECENT RESULTS</Text>
+      <Text style={styles.historyTitle}>RECENT RESULTS</Text>
       {history.map((r, i) => (
         <View key={i} style={styles.historyRow}>
           <Text style={styles.historyGameEmoji}>{GAME_EMOJI[r.game]}</Text>
@@ -845,17 +852,29 @@ const styles = StyleSheet.create({
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 14,
   },
+  headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 11 },
+  headerIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(205,167,101,0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(205,167,101,0.3)',
+  },
   headerTitle: {
-    color: Colors.accent.gold,
-    fontSize: 22,
-    fontFamily: Fonts.bodyExtra,
-    letterSpacing: 2,
+    color: Colors.text.primary,
+    fontSize: 20,
+    fontFamily: Fonts.displayBlack,
+    letterSpacing: 1.5,
   },
   headerSub: {
     color: Colors.text.muted,
+    fontFamily: Fonts.body,
     fontSize: 11,
     marginTop: 2,
   },
@@ -865,17 +884,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(205,167,101,0.3)',
     borderRadius: 14,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 8,
   },
   tokenEmoji: { fontSize: 20 },
-  tokenCount: { color: Colors.accent.gold, fontFamily: Fonts.bodyExtra, fontSize: 18 },
-  tokenLabel: { color: Colors.text.muted, fontSize: 9, fontFamily: Fonts.bodyBold, letterSpacing: 1 },
+  tokenCount: { color: Colors.accent.gold, fontFamily: Fonts.monoSemi, fontSize: 18 },
+  tokenLabel: { color: Colors.text.muted, fontSize: 9, fontFamily: Fonts.bodyBold, letterSpacing: 1.4, marginTop: 1 },
   headerBtnRow: { flexDirection: 'row', gap: 10 },
   buyBtn: { flex: 1, borderRadius: 12, overflow: 'hidden' },
-  buyGrad: { paddingVertical: 12, alignItems: 'center' },
-  buyText: { color: '#000', fontFamily: Fonts.bodyExtra, fontSize: 14, letterSpacing: 1 },
-  cashOutText: { color: '#00210f', fontFamily: Fonts.bodyExtra, fontSize: 14, letterSpacing: 0.5 },
+  buyGrad: { flexDirection: 'row', gap: 7, paddingVertical: 13, alignItems: 'center', justifyContent: 'center' },
+  buyText: { color: '#0E1422', fontFamily: Fonts.bodyExtra, fontSize: 13, letterSpacing: 0.8 },
+  cashOutText: { color: '#06210f', fontFamily: Fonts.bodyExtra, fontSize: 13, letterSpacing: 0.5 },
   cashOutDisabled: { opacity: 0.4 },
   cashOutRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 4 },
   cashOutCard: {
@@ -1178,7 +1197,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
-  betAllIn: { backgroundColor: 'rgba(255,23,68,0.15)', borderColor: Colors.accent.red, borderWidth: 1 },
+  betAllIn: { backgroundColor: 'rgba(255,92,122,0.15)', borderColor: Colors.accent.red, borderWidth: 1 },
   betAdjText: { color: Colors.text.primary, fontFamily: Fonts.bodyExtra, fontSize: 12 },
   betInput: {
     flex: 1,
